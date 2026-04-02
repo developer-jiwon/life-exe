@@ -101,10 +101,8 @@ export default function MainApp() {
     }
 
     setData(d)
-    // 첫 방문(디폴트 생일)이면 바텀시트 자동 오픈
-    if (d.birthDate === '1994-04-30' && !localStorage.getItem('life-exe-custom')) {
-      setTimeout(() => setSheetOpen(true), 800)
-    }
+    // 매번 바텀시트 오픈
+    setTimeout(() => setSheetOpen(true), 800)
   }, [])
 
   const handleLangChange = useCallback((newLang: Lang) => {
