@@ -432,9 +432,10 @@ function buildFactPool(birthDate: string, lang: Lang): RawFact[] {
     value: `~${fn(waterGlasses)}${L('잔', '')}`,
   })
 
-  // Teeth brushed: ~2/day from age 2
+  // Teeth brushed: Korea 3/day, others 2/day from age 2
   const brushAge = Math.max(0, age - 2)
-  const teethBrushed = brushAge * 365 * 2
+  const brushPerDay = lang === "ko" ? 3 : 2
+  const teethBrushed = brushAge * 365 * brushPerDay
   pool.push({
     label: L('양치질 횟수', 'Times brushed teeth'),
     value: `~${fn(teethBrushed)}${t('times', lang)}`,
