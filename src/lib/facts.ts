@@ -157,7 +157,7 @@ function buildFactPool(birthDate: string, lang: Lang): RawFact[] {
   })
 
   // Dreams
-  const dreams = days * 5
+  const dreams = days * 4
   pool.push({
     label: t('dreams', lang),
     value: `~${fn(dreams)}`,
@@ -309,14 +309,14 @@ function buildFactPool(birthDate: string, lang: Lang): RawFact[] {
 
   // Digital (smartphone)
   if (smartphoneAge > 0) {
-    const phoneChecks = smartphoneAge * 365 * 144
+    const phoneChecks = smartphoneAge * 365 * 100
     pool.push({
       label: t('phone', lang),
       value: `~${fn(phoneChecks)}${t('times', lang)}`,
       sub: t('phone_sub', lang),
     })
 
-    const photos = smartphoneAge * 365 * 5
+    const photos = smartphoneAge * 365 * 3
     pool.push({
       label: t('photos', lang),
       value: `~${fn(photos)}${lang === 'ko' ? '장' : ''}`,
@@ -354,11 +354,11 @@ function buildFactPool(birthDate: string, lang: Lang): RawFact[] {
 
   // --- BODY ---
 
-  // Tears: ~10L per year (basal + reflex + emotional)
-  const tearsL = Math.round(age * 10)
+  // Tears: ~0.3L per year (basal + reflex + emotional)
+  const tearsL = (age * 0.3).toFixed(1)
   pool.push({
     label: L('흘린 눈물', 'Tears produced'),
-    value: `~${fn(tearsL)}L`,
+    value: `~${tearsL}L`,
     sub: L('기초눈물 + 반사눈물 + 감정눈물 모두', 'Basal + reflex + emotional tears combined'),
   })
 
@@ -484,16 +484,17 @@ function buildFactPool(birthDate: string, lang: Lang): RawFact[] {
   // --- DIGITAL (from age 13) ---
 
   if (smartphoneAge > 0) {
-    // Text messages: ~50/day (messaging apps like KakaoTalk)
-    const texts = smartphoneAge * 365 * 50
+    // Text messages: Korea ~50/day (KakaoTalk), others ~30/day
+    const textsPerDay = (lang === 'ko') ? 50 : 30
+    const texts = smartphoneAge * 365 * textsPerDay
     pool.push({
       label: L('보낸 메시지', 'Text messages sent'),
       value: `~${fn(texts)}`,
       sub: L('한 글자 한 글자에 마음을 담아', 'Every message carried a piece of you'),
     })
 
-    // Emails received: ~40/day
-    const emails = smartphoneAge * 365 * 40
+    // Emails received: ~15/day (average including non-workers)
+    const emails = smartphoneAge * 365 * 15
     pool.push({
       label: L('받은 이메일', 'Emails received'),
       value: `~${fn(emails)}`,
@@ -614,11 +615,11 @@ function buildFactPool(birthDate: string, lang: Lang): RawFact[] {
     sub: L('던바의 수: 인간이 유지할 수 있는 관계는 ~150명', 'Dunbar\'s number: ~150 stable relationships'),
   })
 
-  // Conversations had: ~10/day (from age 3)
+  // Conversations had: ~8/day (from age 3)
   const convos = ageWeighted(birthDate, (a) => {
     if (a < 3) return 0
     if (a < 6) return 5
-    return 10
+    return 8
   })
   pool.push({
     label: L('나눈 대화', 'Conversations had'),
@@ -688,8 +689,8 @@ function buildFactPool(birthDate: string, lang: Lang): RawFact[] {
     })
   }
 
-  // Hours spent waiting: ~30min/day
-  const waitingHours = Math.round(days * 0.5)
+  // Hours spent waiting: ~20min/day
+  const waitingHours = Math.round(days * 0.33)
   const waitingYears = (waitingHours / (365 * 24)).toFixed(1)
   pool.push({
     label: L('기다린 시간', 'Time spent waiting'),
@@ -761,8 +762,8 @@ function buildFactPool(birthDate: string, lang: Lang): RawFact[] {
     sub: L('태양 주위를 초속 30km로', 'Orbiting the sun at 30km/s'),
   })
 
-  // Eclipses: ~4-5 per year (solar + lunar combined, visible somewhere)
-  const eclipses = Math.round(age * 4.5)
+  // Eclipses: ~2 per year (visible from your location)
+  const eclipses = Math.round(age * 2)
   pool.push({
     label: L('일어난 일식/월식', 'Solar & lunar eclipses'),
     value: `~${eclipses}${t('times', lang)}`,
@@ -851,9 +852,9 @@ function buildFactPool(birthDate: string, lang: Lang): RawFact[] {
     sub: L('거울 속 당신은 계속 달라지고 있다', 'The person in the mirror keeps changing'),
   })
 
-  // Handshakes: ~1/day from age 6
+  // Handshakes: ~0.5/day from age 6 (post-COVID lower)
   const handshakeAge = Math.max(0, age - 6)
-  const handshakes = handshakeAge * 365
+  const handshakes = Math.round(handshakeAge * 365 * 0.5)
   pool.push({
     label: L('악수 횟수', 'Handshakes given'),
     value: `~${fn(handshakes)}`,
@@ -962,9 +963,9 @@ function buildFactPool(birthDate: string, lang: Lang): RawFact[] {
     })
   }
 
-  // Replaying favorite song (~3/day from age 15)
+  // Replaying favorite song (~2/day from age 15)
   if (age > 15) {
-    const songReplays = (age - 15) * 365 * 3
+    const songReplays = (age - 15) * 365 * 2
     pool.push({
       label: L('좋아하는 노래를 반복 재생한 횟수', 'Times you replayed your favorite song'),
       value: `~${fn(songReplays)}${t('times', lang)}`,
@@ -1045,9 +1046,9 @@ function buildFactPool(birthDate: string, lang: Lang): RawFact[] {
     })
   }
 
-  // Days couldn't stop laughing (~5/year)
+  // Days couldn't stop laughing (~10/year)
   {
-    const laughDays = age * 5
+    const laughDays = age * 10
     pool.push({
       label: L('웃음이 멈추지 않았던 날', "Days you couldn't stop laughing"),
       value: `~${fn(laughDays)}${t('days', lang)}`,
@@ -1065,11 +1066,11 @@ function buildFactPool(birthDate: string, lang: Lang): RawFact[] {
     })
   }
 
-  // Smiles received: ~15/day
+  // Smiles received: ~10/day for adults
   const smiles = ageWeighted(birthDate, (a) => {
     if (a < 1) return 30
     if (a < 5) return 20
-    return 15
+    return 10
   })
   pool.push({
     label: L('받은 미소', 'Smiles received'),
