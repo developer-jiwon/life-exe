@@ -118,6 +118,7 @@ export default function MainApp() {
     localStorage.setItem('life-exe-custom', 'true')
     setData(loadData())
     setSheetOpen(false)
+    window.scrollTo({ top: 0, behavior: 'smooth' })
   }, [data])
 
   const handleParentSave = useCallback((parents: { label: string; date: string }[] | null) => {
