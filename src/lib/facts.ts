@@ -107,9 +107,9 @@ function buildFactPool(birthDate: string, lang: Lang): RawFact[] {
 
   // Heart
   const heartbeats = ageWeighted(birthDate, (a) => {
-    if (a < 1) return 120 * 60 * 24
-    if (a < 5) return 100 * 60 * 24
-    if (a < 12) return 85 * 60 * 24
+    if (a < 1) return 127 * 60 * 24
+    if (a < 5) return 96 * 60 * 24
+    if (a < 12) return 82 * 60 * 24
     return 72 * 60 * 24
   })
   pool.push({
@@ -120,10 +120,10 @@ function buildFactPool(birthDate: string, lang: Lang): RawFact[] {
 
   // Breaths
   const breaths = ageWeighted(birthDate, (a) => {
-    if (a < 1) return 40 * 60 * 24
-    if (a < 5) return 25 * 60 * 24
+    if (a < 1) return 44 * 60 * 24
+    if (a < 5) return 26 * 60 * 24
     if (a < 12) return 20 * 60 * 24
-    return 15 * 60 * 24
+    return 14 * 60 * 24
   })
   pool.push({
     label: t('breaths', lang),
@@ -133,7 +133,7 @@ function buildFactPool(birthDate: string, lang: Lang): RawFact[] {
   // Blinks
   const blinks = ageWeighted(birthDate, (a) => {
     if (a < 1) return 3 * 60 * 16
-    if (a < 5) return 8 * 60 * 16
+    if (a < 5) return 6 * 60 * 16
     return 15 * 60 * 16
   })
   pool.push({
@@ -146,8 +146,8 @@ function buildFactPool(birthDate: string, lang: Lang): RawFact[] {
     if (a < 1) return 16
     if (a < 5) return 12
     if (a < 12) return 10
-    if (a < 18) return 9
-    return 7.5
+    if (a < 18) return 8.5
+    return 7
   })
   const sleepYears = (sleepHours / (365 * 24)).toFixed(1)
   pool.push({
@@ -185,10 +185,11 @@ function buildFactPool(birthDate: string, lang: Lang): RawFact[] {
     sub: t('water_sub', lang, Math.round(waterL / 200)),
   })
 
-  // Coffee
+  // Coffee (Korea avg 2/day, others 1.3/day)
   if (age >= 15) {
     const coffeeYears = age - 15
-    const coffees = Math.round(coffeeYears * 365 * 1.3)
+    const coffeePerDay = (lang === 'ko') ? 2 : 1.3
+    const coffees = Math.round(coffeeYears * 365 * coffeePerDay)
     pool.push({
       label: t('coffee', lang),
       value: `~${fn(coffees)}${t('cups', lang)}`,
@@ -197,8 +198,8 @@ function buildFactPool(birthDate: string, lang: Lang): RawFact[] {
 
   // Laughs
   const laughs = ageWeighted(birthDate, (a) => {
-    if (a < 5) return 300
-    if (a < 12) return 100
+    if (a < 5) return 200
+    if (a < 12) return 50
     return 15
   })
   pool.push({
@@ -208,7 +209,7 @@ function buildFactPool(birthDate: string, lang: Lang): RawFact[] {
   })
 
   // Cries
-  const cries = age < 2 ? days * 3 : 2 * 365 * 3 + (age - 2) * 40
+  const cries = age < 2 ? days * 10 : 2 * 365 * 10 + (age - 2) * 30
   pool.push({
     label: t('cries', lang),
     value: `~${fn(cries)}${t('times', lang)}`,
@@ -280,9 +281,9 @@ function buildFactPool(birthDate: string, lang: Lang): RawFact[] {
   // Walking
   const walkKm = ageWeighted(birthDate, (a) => {
     if (a < 1) return 0
-    if (a < 5) return 2000 * 0.4 / 1000
-    if (a < 12) return 8000 * 0.5 / 1000
-    return 6500 * 0.7 / 1000
+    if (a < 5) return 6000 * 0.35 / 1000
+    if (a < 12) return 10000 * 0.55 / 1000
+    return 6000 * 0.7 / 1000
   })
   const totalKm = Math.round(walkKm)
   pool.push({
@@ -308,20 +309,20 @@ function buildFactPool(birthDate: string, lang: Lang): RawFact[] {
 
   // Digital (smartphone)
   if (smartphoneAge > 0) {
-    const phoneChecks = smartphoneAge * 365 * 96
+    const phoneChecks = smartphoneAge * 365 * 144
     pool.push({
       label: t('phone', lang),
       value: `~${fn(phoneChecks)}${t('times', lang)}`,
       sub: t('phone_sub', lang),
     })
 
-    const photos = smartphoneAge * 365 * 4
+    const photos = smartphoneAge * 365 * 5
     pool.push({
       label: t('photos', lang),
       value: `~${fn(photos)}${lang === 'ko' ? '장' : ''}`,
     })
 
-    const screenHours = smartphoneAge * 365 * 4.5
+    const screenHours = smartphoneAge * 365 * 6.5
     const screenYears = (screenHours / (365 * 24)).toFixed(1)
     pool.push({
       label: t('screentime', lang),
@@ -361,25 +362,25 @@ function buildFactPool(birthDate: string, lang: Lang): RawFact[] {
     sub: L('기초눈물 + 반사눈물 + 감정눈물 모두', 'Basal + reflex + emotional tears combined'),
   })
 
-  // Steps taken: ~7,000/day average (age-weighted)
+  // Steps taken: age-weighted
   const steps = ageWeighted(birthDate, (a) => {
     if (a < 1) return 0
-    if (a < 5) return 3000
+    if (a < 5) return 6000
     if (a < 12) return 10000
     if (a < 18) return 8000
-    if (a < 65) return 7000
+    if (a < 65) return 6000
     return 4000
   })
   pool.push({
     label: L('걸은 걸음 수', 'Steps taken'),
     value: `${fl(steps)}`,
-    sub: L('하루 평균 약 7,000걸음', '~7,000 steps per day on average'),
+    sub: L('하루 평균 약 6,000걸음', '~6,000 steps per day on average'),
   })
 
   // Heart beats today so far
   const now = new Date()
   const minutesSinceMidnight = now.getHours() * 60 + now.getMinutes()
-  const heartrateNow = age < 12 ? 85 : 72
+  const heartrateNow = age < 1 ? 127 : age < 5 ? 96 : age < 12 ? 82 : 72
   const heartbeatsToday = minutesSinceMidnight * heartrateNow
   pool.push({
     label: L('오늘 심장이 뛴 횟수', 'Heartbeats so far today'),
@@ -389,9 +390,10 @@ function buildFactPool(birthDate: string, lang: Lang): RawFact[] {
 
   // --- FOOD ---
 
-  // Eggs eaten: ~250/year (from age 2)
+  // Eggs eaten: Korea ~268/year (one of highest globally), others ~150/year (from age 2)
   const eggsAge = Math.max(0, age - 2)
-  const eggs = Math.round(eggsAge * 250)
+  const eggsPerYear = (lang === 'ko') ? 268 : 150
+  const eggs = Math.round(eggsAge * eggsPerYear)
   pool.push({
     label: L('먹은 달걀', 'Eggs eaten'),
     value: `~${fn(eggs)}${L('개', '')}`,
@@ -400,9 +402,9 @@ function buildFactPool(birthDate: string, lang: Lang): RawFact[] {
 
   // Rice/bread: culture-specific
   if (lang === 'ko' || lang === 'ja' || lang === 'zh') {
-    // Rice: ~60kg/year in Korea (from age 2)
+    // Rice: ~70kg/year per capita in Korea (from age 2)
     const riceAge = Math.max(0, age - 2)
-    const riceKg = Math.round(riceAge * 60)
+    const riceKg = Math.round(riceAge * 70)
     pool.push({
       label: L('먹은 쌀', 'Rice consumed'),
       value: `~${fn(riceKg)}kg`,
@@ -481,16 +483,16 @@ function buildFactPool(birthDate: string, lang: Lang): RawFact[] {
   // --- DIGITAL (from age 13) ---
 
   if (smartphoneAge > 0) {
-    // Text messages: ~40/day
-    const texts = smartphoneAge * 365 * 40
+    // Text messages: ~50/day (messaging apps like KakaoTalk)
+    const texts = smartphoneAge * 365 * 50
     pool.push({
       label: L('보낸 메시지', 'Text messages sent'),
       value: `~${fn(texts)}`,
       sub: L('한 글자 한 글자에 마음을 담아', 'Every message carried a piece of you'),
     })
 
-    // Emails received: ~30/day
-    const emails = smartphoneAge * 365 * 30
+    // Emails received: ~40/day
+    const emails = smartphoneAge * 365 * 40
     pool.push({
       label: L('받은 이메일', 'Emails received'),
       value: `~${fn(emails)}`,
@@ -521,8 +523,8 @@ function buildFactPool(birthDate: string, lang: Lang): RawFact[] {
       sub: L('배터리 1%의 초조함', 'The anxiety of 1% battery'),
     })
 
-    // Passwords entered: ~8/day
-    const passwords = smartphoneAge * 365 * 8
+    // Passwords entered: ~5/day (biometrics reduced this)
+    const passwords = smartphoneAge * 365 * 5
     pool.push({
       label: L('비밀번호 입력', 'Passwords entered'),
       value: `~${fn(passwords)}${t('times', lang)}`,
@@ -649,13 +651,16 @@ function buildFactPool(birthDate: string, lang: Lang): RawFact[] {
     sub: L('2월 29일이 선물처럼 찾아온 날', 'When February 29th appeared like a gift'),
   })
 
-  // Hours spent eating: ~1.5h/day
-  const eatingHours = Math.round(days * 1.5)
+  // Hours spent eating: Korea 1.8h/day (OECD), others 1.5h/day
+  const eatingPerDay = (lang === 'ko') ? 1.8 : 1.5
+  const eatingHours = Math.round(days * eatingPerDay)
   const eatingYears = (eatingHours / (365 * 24)).toFixed(1)
   pool.push({
     label: L('식사에 쓴 시간', 'Time spent eating'),
     value: `~${eatingYears}${t('years', lang)}`,
-    sub: L('하루 약 1.5시간, 맛있게', '~1.5 hours a day, savoring each bite'),
+    sub: lang === 'ko'
+      ? '하루 약 1.8시간, 맛있게 (OECD 기준 한국 평균)'
+      : '~1.5 hours a day, savoring each bite',
   })
 
   // Hours in bathroom: ~30min/day
@@ -667,15 +672,18 @@ function buildFactPool(birthDate: string, lang: Lang): RawFact[] {
     sub: L('스마트폰 시대엔 더 길어졌을 거다', 'Probably longer in the smartphone era'),
   })
 
-  // Hours commuting (from age 20): ~1h/day
+  // Hours commuting (from age 20): Korea 1.5h/day, others 1h/day
   if (age >= 20) {
     const commuteAge = age - 20
-    const commuteHours = commuteAge * 365
+    const commuteHoursPerDay = (lang === 'ko') ? 1.5 : 1
+    const commuteHours = commuteAge * 365 * commuteHoursPerDay
     const commuteYears = (commuteHours / (365 * 24)).toFixed(1)
     pool.push({
       label: L('출퇴근/이동 시간', 'Time spent commuting'),
       value: `~${commuteYears}${t('years', lang)}`,
-      sub: L('하루 1시간, 인생의 일부', '~1 hour per day of your life'),
+      sub: lang === 'ko'
+        ? '하루 1.5시간, 인생의 일부'
+        : '~1 hour per day of your life',
     })
   }
 
@@ -943,9 +951,9 @@ function buildFactPool(birthDate: string, lang: Lang): RawFact[] {
     })
   }
 
-  // Waking at dawn (~30 times/year)
+  // Waking at dawn (~20 times/year)
   {
-    const dawnWakes = age * 30
+    const dawnWakes = age * 20
     pool.push({
       label: L('새벽에 깨어본 횟수', 'Times you woke at dawn'),
       value: `~${fn(dawnWakes)}${t('times', lang)}`,
@@ -963,9 +971,10 @@ function buildFactPool(birthDate: string, lang: Lang): RawFact[] {
     })
   }
 
-  // Packages waited for (~30/year from age 18)
+  // Packages waited for (Korea ~50/year, others ~30/year, from age 18)
   if (age > 18) {
-    const packages = (age - 18) * 30
+    const packagesPerYear = (lang === 'ko') ? 50 : 30
+    const packages = (age - 18) * packagesPerYear
     pool.push({
       label: L('택배를 기다린 횟수', 'Packages waited for'),
       value: `~${fn(packages)}${t('times', lang)}`,
@@ -973,9 +982,9 @@ function buildFactPool(birthDate: string, lang: Lang): RawFact[] {
     })
   }
 
-  // Missing someone (~100/year from age 5)
-  if (age >= 5) {
-    const missSomeone = (age - 5) * 100
+  // Missing someone (~50/year from age 10)
+  if (age >= 10) {
+    const missSomeone = (age - 10) * 50
     pool.push({
       label: L('누군가가 보고 싶었던 순간', 'Moments you missed someone'),
       value: `~${fn(missSomeone)}${t('times', lang)}`,
@@ -1045,9 +1054,9 @@ function buildFactPool(birthDate: string, lang: Lang): RawFact[] {
     })
   }
 
-  // Stargazing nights (~20/year)
+  // Stargazing nights (~12/year, urbanization reduces this)
   {
-    const starNights = age * 20
+    const starNights = age * 12
     pool.push({
       label: L('별을 올려다본 밤', 'Nights you looked up at the stars'),
       value: `~${fn(starNights)}${t('times', lang)}`,
