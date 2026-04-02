@@ -3,6 +3,10 @@ import { NextRequest, NextResponse } from 'next/server'
 const BOT_AGENTS = [
   'facebookexternalhit',
   'Facebot',
+  'facebookcatalog',
+  'Instagram',
+  'Threadbot',
+  'meta-externalagent',
   'Twitterbot',
   'LinkedInBot',
   'Slackbot',
@@ -12,6 +16,11 @@ const BOT_AGENTS = [
   'kakaotalk-scrap',
   'googlebot',
   'bingbot',
+  'bot',
+  'crawl',
+  'spider',
+  'preview',
+  'fetch',
 ]
 
 export function middleware(request: NextRequest) {
@@ -19,7 +28,12 @@ export function middleware(request: NextRequest) {
   const isBot = BOT_AGENTS.some(bot => ua.toLowerCase().includes(bot.toLowerCase()))
 
   const path = request.nextUrl.pathname
-  if (isBot && (path === '/' || path === '' || path === '/life')) {
+  // JS를 실행 안 하는 요청 = 크롤러일 가능성 높음
+  const accept = request.headers.get('accept') || ''
+  const noJS = !request.headers.get('sec-fetch-dest') // 브라우저는 sec-fetch-dest 보냄, 크롤러는 안 보냄
+  const looksLikeBot = isBot || (noJS && !accept.includes('*/*'))
+
+  if (looksLikeBot && (path === '/' || path === '' || path === '/life')) {
     const html = `<!DOCTYPE html>
 <html>
 <head>
