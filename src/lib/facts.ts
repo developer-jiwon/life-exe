@@ -204,6 +204,57 @@ export function getAllFacts(birthDate: string): LifeFact[] {
   const peopleMet = Math.round(age * 2500) // 연간 ~2,500명
   add('스쳐간 사람', `~${peopleMet.toLocaleString()}명`, '그중 이름을 아는 사람은 ~150명')
 
+  // ── 추가 신체 ──
+  const redBloodCells = Math.round(days * 200_000_000_000 / 1_000_000_000_000) // 하루 2000억개 생성
+  add('만들어진 적혈구', `~${redBloodCells}조 개`, '매일 2000억 개씩, 멈추지 않고')
+
+  const km_blood = Math.round(days * 19000 / 1000) // 하루 혈액 19,000km 순환
+  add('혈액이 이동한 거리', `~${km_blood.toLocaleString()}만km`, `지구-달 왕복 ${Math.round(km_blood * 1000 / 384400)}번`)
+
+  // ── 음식 상세 ──
+  const rice = Math.round(Math.max(0, age - 1) * 365 * 0.3) // 하루 0.3kg
+  add('먹은 밥', `~${rice.toLocaleString()}kg`, `쌀 ${Math.round(rice / 60)}포대`)
+
+  const chocolate = Math.round(Math.max(0, age - 5) * 4) // 연간 4kg (한국 평균 ~2kg, 넉넉히)
+  if (chocolate > 0) add('먹은 초콜릿', `~${chocolate}kg`)
+
+  // ── 활동 ──
+  const showers = Math.round(Math.max(0, age - 1) * 365 * 0.9) // 90% 확률 매일
+  add('한 샤워', `~${showers.toLocaleString()}번`)
+
+  const toothbrush = Math.round(Math.max(0, age - 2) * 365 * 2) // 하루 2번
+  add('양치질', `~${toothbrush.toLocaleString()}번`, '하루 두 번, 빼먹은 날도 있겠지')
+
+  const toilet = Math.round(days * 6.5) // 하루 6~7회
+  add('화장실', `~${toilet.toLocaleString()}번`)
+
+  // ── 감정 ──
+  const hugs = Math.round(age < 5 ? age * 365 * 8 : 5 * 365 * 8 + Math.max(0, age - 5) * 365 * 2)
+  add('받은 포옹', `~${hugs.toLocaleString()}번`, '아기 때 하루 8번, 어른은 하루 2번')
+
+  const words = Math.round(Math.max(0, age - 2) * 365 * 16000) // 하루 16,000단어
+  add('말한 단어', `~${(words / 1_000_000).toFixed(0)}만 단어`, '하루 평균 16,000단어')
+
+  // ── 환경 ──
+  const trash = Math.round(age * 365) // 하루 ~1kg
+  add('버린 쓰레기', `~${trash.toLocaleString()}kg`, `${(trash / 1000).toFixed(1)}톤`)
+
+  const co2 = Math.round(age * 6.5 * 1000) // 한국 1인당 연간 ~6.5톤 CO2
+  add('배출한 CO₂', `~${(co2 / 1000).toFixed(1)}톤`)
+
+  const trees_oxygen = Math.round(days / 2) // 나무 2그루가 1명 1일 산소 공급
+  add('산소를 준 나무', `~${trees_oxygen.toLocaleString()}그루·일`, '매일 나무 2그루가 당신을 살렸다')
+
+  // ── 우주 ──
+  const earthRotations = days // 지구 자전 = 하루
+  add('지구 자전', `${earthRotations.toLocaleString()}바퀴`, '당신과 함께 돌았다')
+
+  const sunOrbit = (days / 365.25).toFixed(1) // 태양 공전
+  add('태양 공전', `${sunOrbit}바퀴`, `시속 107,000km로`)
+
+  const distanceInSpace = Math.round(days * 2_574_000) // 태양계가 은하 중심을 돌며 하루 ~257만km 이동
+  add('우주에서 이동한 거리', `~${(distanceInSpace / 1_000_000_000).toFixed(1)}억km`, '가만히 있어도 우주는 움직인다')
+
   // ── 100세 ──
   const daysTo100 = (100 * 365) - days
   if (daysTo100 > 0) {
