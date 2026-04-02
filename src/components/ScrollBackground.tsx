@@ -2,18 +2,17 @@
 
 import { useEffect } from 'react'
 
-// 생년월일에 따라 파스텔 하나 결정
+// 파스텔 색 — 좀 더 확실하게
 const PASTELS = [
-  [255, 248, 235],     // 연노랑
-  [252, 242, 244],     // 핑크
-  [245, 242, 252],     // 라벤더
-  [240, 247, 252],     // 소라
-  [243, 250, 243],     // 연두
+  [255, 240, 210],     // 연노랑
+  [250, 228, 232],     // 핑크
+  [235, 228, 248],     // 라벤더
+  [225, 240, 252],     // 소라
+  [230, 248, 230],     // 연두
 ]
 
 export default function ScrollBackground({ birthDate }: { birthDate: string }) {
   useEffect(() => {
-    // 생년월일 해시로 색 하나 고정
     const hash = birthDate.split('').reduce((a, c) => a + c.charCodeAt(0), 0)
     const color = PASTELS[hash % PASTELS.length]
 
@@ -22,8 +21,8 @@ export default function ScrollBackground({ birthDate }: { birthDate: string }) {
       const docHeight = document.documentElement.scrollHeight - window.innerHeight
       const progress = Math.min(scrollTop / Math.max(docHeight, 1), 1)
 
-      // 0% → 흰색, 100% → 파스텔 (최대 40% 강도 = 아주 연하게)
-      const intensity = progress * 0.4
+      // 0% → 흰색, 100% → 파스텔 (최대 70% 강도)
+      const intensity = progress * 0.7
 
       const r = Math.round(255 + (color[0] - 255) * intensity)
       const g = Math.round(255 + (color[1] - 255) * intensity)
