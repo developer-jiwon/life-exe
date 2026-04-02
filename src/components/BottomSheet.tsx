@@ -39,7 +39,7 @@ export default function BottomSheet({ open, onClose, children }: BottomSheetProp
         style={{ transform: visible ? 'translateY(0)' : 'translateY(100%)' }}
       >
         <div className="w-8 h-[3px] bg-[#E0E0E0] rounded-full mx-auto mt-3" />
-        <div className="px-6 pt-5 pb-8">
+        <div className="px-6 pt-5 pb-8" style={{ paddingBottom: 'max(2rem, env(safe-area-inset-bottom))' }}>
           {children}
         </div>
       </div>

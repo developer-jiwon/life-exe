@@ -101,8 +101,11 @@ export default function MainApp() {
     }
 
     setData(d)
-    // 매번 바텀시트 오픈
-    setTimeout(() => setSheetOpen(true), 800)
+    // 매번 바텀시트 오픈 (iOS Safari 호환)
+    const timer = setTimeout(() => {
+      requestAnimationFrame(() => setSheetOpen(true))
+    }, 1200)
+    return () => clearTimeout(timer)
   }, [])
 
   const handleLangChange = useCallback((newLang: Lang) => {
