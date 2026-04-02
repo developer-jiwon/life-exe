@@ -10,6 +10,7 @@ import type { FamousPerson } from '@/lib/types'
 import CountUp from './CountUp'
 import FullScreenFact from './FullScreenFact'
 import { BirthDateSheet } from './BottomSheet'
+import ScrollBackground from './ScrollBackground'
 
 function Famous({ person, age, align }: { person: FamousPerson; age: number; align: 'left' | 'center' | 'right' }) {
   const diff = age - person.age
@@ -60,7 +61,8 @@ export default function MainApp() {
   const FAMOUS_ALIGNS: Array<'left' | 'center' | 'right'> = ['left', 'right', 'center', 'left', 'right']
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen">
+      <ScrollBackground />
       <div className="max-w-[600px] mx-auto">
 
         <header className="flex items-center pt-8 px-5 gap-0">
@@ -100,7 +102,7 @@ export default function MainApp() {
               {showFamous && famousIdx - 1 < famous.length && (
                 <Famous person={famous[famousIdx - 1]} age={age} align={FAMOUS_ALIGNS[(famousIdx - 1) % FAMOUS_ALIGNS.length]} />
               )}
-              <FullScreenFact align={fact.align} colorIdx={idx}>
+              <FullScreenFact align={fact.align}>
                 <p className="text-[11px] text-[#999] mb-0.5">{fact.label}</p>
                 <p className={`${sizeClass} font-bold text-[#1A1A1A] leading-tight`} style={{ fontFamily: 'var(--font-jakarta)' }}>{fact.value}</p>
                 {fact.sub && <p className="text-[11px] text-[#999] mt-0.5">{fact.sub}</p>}
