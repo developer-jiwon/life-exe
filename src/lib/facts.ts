@@ -61,8 +61,9 @@ interface RawFact {
   label: string
   value: string
   sub?: string
-  pinFirst?: boolean  // always include, placed at start
-  pinLast?: boolean   // always include, placed at end
+  pinFirst?: boolean
+  pinLast?: boolean
+  cat?: 'fact' | 'emotional'  // 70% fact, 30% emotional
 }
 
 function buildFactPool(birthDate: string, lang: Lang): RawFact[] {
@@ -1073,23 +1074,41 @@ function buildFactPool(birthDate: string, lang: Lang): RawFact[] {
 export function getAllFacts(birthDate: string, lang: Lang = 'ko'): LifeFact[] {
   const pool = buildFactPool(birthDate, lang)
 
+  // Tag emotional facts
+  const emotionalKeywords = ['첫 걸음마', '처음 말', '비 오는 날', '새벽에', '좋아하는 노래', '택배', '보고 싶', '고마움', '혼자만', '깊은 한숨', '잠들기 전', '가슴이 뛴', '웃음이 멈추', '별을 올려', '받은 미소', 'first steps', 'first word', 'rain', 'dawn', 'replayed', 'Package', 'missed someone', 'grateful', 'alone', 'sigh', 'before sleep', 'heart first', 'stop laugh', 'stars', 'Smiles']
+  for (const f of pool) {
+    if (!f.cat) {
+      f.cat = emotionalKeywords.some(kw => f.label.includes(kw) || (f.sub && f.sub.includes(kw))) ? 'emotional' : 'fact'
+    }
+  }
+
   // Separate pinned facts
   const pinFirst = pool.filter(f => f.pinFirst)
   const pinLast = pool.filter(f => f.pinLast)
-  const rest = pool.filter(f => !f.pinFirst && !f.pinLast)
+  const facts = pool.filter(f => !f.pinFirst && !f.pinLast && f.cat === 'fact')
+  const emotional = pool.filter(f => !f.pinFirst && !f.pinLast && f.cat === 'emotional')
 
-  // Seeded shuffle of the rest, consistent within a day
+  // Seeded shuffle
   const seed = dateSeed(birthDate)
   const rng = mulberry32(seed)
-  const shuffled = seededShuffle(rest, rng)
+  const shuffledFacts = seededShuffle(facts, rng)
+  const shuffledEmotional = seededShuffle(emotional, rng)
 
-  // Select ~35 from shuffled (minus pinned slots)
+  // 70% fact + 30% emotional
   const TARGET = 35
-  const selectCount = Math.min(TARGET - pinFirst.length - pinLast.length, shuffled.length)
-  const selected = shuffled.slice(0, selectCount)
+  const slots = TARGET - pinFirst.length - pinLast.length
+  const emotionalCount = Math.min(Math.round(slots * 0.3), shuffledEmotional.length)
+  const factCount = Math.min(slots - emotionalCount, shuffledFacts.length)
+
+  const selected = [
+    ...shuffledFacts.slice(0, factCount),
+    ...shuffledEmotional.slice(0, emotionalCount),
+  ]
+  // Shuffle selected together so emotional isn't all at the end
+  const finalSelected = seededShuffle(selected, rng)
 
   // Combine: first pinned, then selected, then last pinned
-  const combined: RawFact[] = [...pinFirst, ...selected, ...pinLast]
+  const combined: RawFact[] = [...pinFirst, ...finalSelected, ...pinLast]
 
   // Assign layout (align/size) based on index
   return combined.map((f, i): LifeFact => ({
