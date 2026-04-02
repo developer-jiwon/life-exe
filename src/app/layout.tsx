@@ -20,16 +20,19 @@ const pretendard = localFont({
 export const metadata: Metadata = {
   title: "Life.exe — How far along are you?",
   description: "Your life in numbers. Heartbeats, seasons, sunsets, and the people who changed the world at your age.",
+  metadataBase: new URL("https://so.now-then.dev"),
   openGraph: {
     title: "Life.exe — How far along are you?",
     description: "Your life in numbers. Heartbeats, seasons, sunsets, and people who changed the world at your age.",
     type: "website",
     locale: "ko_KR",
+    images: [{ url: "/og-image.png", width: 1200, height: 630, alt: "Life.exe" }],
   },
   twitter: {
     card: "summary_large_image",
     title: "Life.exe — How far along are you?",
     description: "Your life in numbers. Heartbeats, seasons, sunsets, and the people who changed the world at your age.",
+    images: ["/og-image.png"],
   },
 }
 
