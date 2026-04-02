@@ -30,8 +30,24 @@ export default function MainApp() {
   const [data, setData] = useState<LifeData | null>(null)
   const [sheetOpen, setSheetOpen] = useState(false)
 
+  const [sharedMode, setSharedMode] = useState(false)
+
   useEffect(() => {
     const d = loadData()
+
+    // URL에 ?b=YYYYMMDD 있으면 그 생일로 보여주기 (공유 링크)
+    const params = new URLSearchParams(window.location.search)
+    const sharedBirth = params.get('b')
+    if (sharedBirth && sharedBirth.length === 8) {
+      const formatted = `${sharedBirth.slice(0, 4)}-${sharedBirth.slice(4, 6)}-${sharedBirth.slice(6, 8)}`
+      const testDate = new Date(formatted)
+      if (!isNaN(testDate.getTime())) {
+        setData({ ...d, birthDate: formatted })
+        setSharedMode(true)
+        return
+      }
+    }
+
     setData(d)
     // 첫 방문(디폴트 생일)이면 바텀시트 자동 오픈
     if (d.birthDate === '1994-04-30' && !localStorage.getItem('life-exe-custom')) {
@@ -117,13 +133,42 @@ export default function MainApp() {
           <p className="text-xs text-[#666] mt-2">지금 이 순간도 당신의 인생입니다</p>
         </FullScreenFact>
 
-        <div className="px-5 py-4">
-          <button className="w-full h-11 rounded-xl bg-[#1A1A1A] text-white text-sm font-medium active:scale-[0.98] transition-transform" style={{ fontFamily: 'inherit' }}
+        <div className="px-5 py-4 space-y-2">
+          {sharedMode && (
+            <button
+              className="w-full h-11 rounded-xl bg-[#1A1A1A] text-white text-sm font-medium active:scale-[0.98] transition-transform"
+              style={{ fontFamily: 'inherit' }}
+              onClick={() => {
+                window.history.replaceState(null, '', window.location.pathname)
+                setSharedMode(false)
+                const d = loadData()
+                setData(d)
+                if (!localStorage.getItem('life-exe-custom')) {
+                  setTimeout(() => setSheetOpen(true), 300)
+                }
+              }}
+            >
+              Try with my birthday
+            </button>
+          )}
+          <button
+            className={`w-full h-11 rounded-xl text-sm font-medium active:scale-[0.98] transition-transform ${
+              sharedMode ? 'bg-[#F0F0F0] text-[#1A1A1A]' : 'bg-[#1A1A1A] text-white'
+            }`}
+            style={{ fontFamily: 'inherit' }}
             onClick={() => {
-              const text = `My life is ${pct.toFixed(1)}% done. ${days.toLocaleString()} days. #LifeExe`
-              if (navigator.share) navigator.share({ title: 'Life.exe', text }).catch(() => {})
-              else { navigator.clipboard.writeText(text).catch(() => {}) }
-            }}>Share my life</button>
+              const bd = data.birthDate.replace(/-/g, '')
+              const url = `${window.location.origin}/?b=${bd}`
+              const text = `${pct.toFixed(1)}% of my life. ${days.toLocaleString()} days.\n${url}`
+              if (navigator.share) {
+                navigator.share({ title: 'Life.exe', text, url }).catch(() => {})
+              } else {
+                navigator.clipboard.writeText(url).then(() => alert('Link copied!')).catch(() => {})
+              }
+            }}
+          >
+            Share my life
+          </button>
         </div>
 
         <footer className="text-center text-[10px] text-[#C0C0C0] pb-8"><p>Every moment counts.</p></footer>
