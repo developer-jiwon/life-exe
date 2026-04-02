@@ -219,23 +219,23 @@ export default function MainApp() {
           <p className="text-xs text-[#666] mt-2">{t('today_msg', lang)}</p>
         </FullScreenFact>
 
-        {/* Shared mode: try my birthday */}
-        {sharedMode && (
-          <div className="px-5 py-3 text-center">
-            <button
-              className="text-[12px] text-[#1A1A1A] font-medium underline underline-offset-2 active:text-[#666]"
-              style={{ fontFamily: 'var(--font-jakarta)' }}
-              onClick={() => {
+        {/* Try my birthday — 항상 표시 */}
+        <div className="px-5 py-3 text-center">
+          <button
+            className="text-[12px] text-[#1A1A1A] font-medium underline underline-offset-2 active:text-[#666]"
+            style={{ fontFamily: 'var(--font-jakarta)' }}
+            onClick={() => {
+              if (sharedMode) {
                 window.history.replaceState(null, '', window.location.pathname)
                 setSharedMode(false)
                 setData(loadData())
-                setTimeout(() => setSheetOpen(true), 300)
-              }}
-            >
-              {t('try_my_birthday', lang)}
-            </button>
-          </div>
-        )}
+              }
+              setTimeout(() => setSheetOpen(true), 100)
+            }}
+          >
+            {t('try_my_birthday', lang)}
+          </button>
+        </div>
 
         {/* Parent section — Phase 2 */}
         {/* TODO: 부모님 생일 감성 팩트 (남은 시간, 설날, 식사, 전화, 여행) */}
