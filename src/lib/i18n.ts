@@ -93,7 +93,7 @@ const T: Record<string, Record<Lang, string>> = {
 
 export function t(key: string, lang: Lang, ...args: (string | number)[]): string {
   const template = T[key]?.[lang] ?? T[key]?.['ko'] ?? key
-  return args.reduce<string>((s, arg, i) => s.replace(`{${i}}`, String(arg)), template)
+  return args.reduce<string>((s, arg, i) => s.replaceAll(`{${i}}`, String(arg)), template)
 }
 
 export function getLangFromStorage(): Lang {
@@ -119,7 +119,7 @@ export function fmtLargeNum(n: number, lang: Lang): string {
   const locale = LOCALE_MAP[lang]
   if (lang === 'ko' || lang === 'ja' || lang === 'zh') {
     if (n >= 1_000_000_000_000) return `~${(n / 1_000_000_000_000).toFixed(1)}${lang === 'ko' ? '조' : lang === 'ja' ? '兆' : '万亿'}`
-    if (n >= 100_000_000) return `~${Math.round(n / 100_000_000)}${lang === 'ko' ? '억' : lang === 'ja' ? '億' : '亿'}`
+    if (n >= 50_000_000) return `~${(n / 100_000_000).toFixed(1)}${lang === 'ko' ? '억' : lang === 'ja' ? '億' : '亿'}`
     if (n >= 10_000) return `~${n.toLocaleString(locale)}`
     return n.toLocaleString(locale)
   }
