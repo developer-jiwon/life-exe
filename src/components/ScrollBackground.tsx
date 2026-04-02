@@ -22,8 +22,8 @@ export default function ScrollBackground({ birthDate }: { birthDate: string }) {
       const docHeight = document.documentElement.scrollHeight - window.innerHeight
       const progress = Math.min(scrollTop / Math.max(docHeight, 1), 1)
 
-      // 0% → 흰색, 50% → 파스텔 최대, 100% → 다시 흰색
-      const intensity = Math.sin(progress * Math.PI) * 0.6
+      // 0% → 흰색, 100% → 파스텔 (최대 40% 강도 = 아주 연하게)
+      const intensity = progress * 0.4
 
       const r = Math.round(255 + (color[0] - 255) * intensity)
       const g = Math.round(255 + (color[1] - 255) * intensity)
