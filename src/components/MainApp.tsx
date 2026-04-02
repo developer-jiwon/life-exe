@@ -101,11 +101,16 @@ export default function MainApp() {
     }
 
     setData(d)
-    // 매번 바텀시트 오픈 (iOS Safari 호환)
-    const timer = setTimeout(() => {
-      requestAnimationFrame(() => setSheetOpen(true))
-    }, 1200)
-    return () => clearTimeout(timer)
+    // 매번 바텀시트 오픈 (인앱 브라우저 호환)
+    const openSheet = () => setSheetOpen(true)
+    if (document.readyState === 'complete') {
+      const t = setTimeout(openSheet, 500)
+      return () => clearTimeout(t)
+    } else {
+      const handler = () => setTimeout(openSheet, 500)
+      window.addEventListener('load', handler)
+      return () => window.removeEventListener('load', handler)
+    }
   }, [])
 
   const handleLangChange = useCallback((newLang: Lang) => {
@@ -194,6 +199,13 @@ export default function MainApp() {
           <div className="mt-1 w-28 mx-auto h-[2px] bg-[#F0F0F0] rounded-full overflow-hidden">
             <div className="h-full bg-[#1A1A1A] rounded-full transition-all duration-[2s]" style={{ width: `${pct}%` }} />
           </div>
+          <button
+            onClick={() => setSheetOpen(true)}
+            className="mt-3 text-[11px] text-[#999] underline underline-offset-2 active:text-[#1A1A1A]"
+            style={{ fontFamily: 'var(--font-jakarta)' }}
+          >
+            {t('try_my_birthday', lang)}
+          </button>
         </div>
 
         {facts.map((fact, idx) => {
