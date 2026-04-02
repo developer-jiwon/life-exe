@@ -100,7 +100,7 @@ export default function MainApp() {
               {showFamous && famousIdx - 1 < famous.length && (
                 <Famous person={famous[famousIdx - 1]} age={age} align={FAMOUS_ALIGNS[(famousIdx - 1) % FAMOUS_ALIGNS.length]} />
               )}
-              <FullScreenFact align={fact.align}>
+              <FullScreenFact align={fact.align} colorIdx={idx}>
                 <p className="text-[11px] text-[#999] mb-0.5">{fact.label}</p>
                 <p className={`${sizeClass} font-bold text-[#1A1A1A] leading-tight`} style={{ fontFamily: 'var(--font-jakarta)' }}>{fact.value}</p>
                 {fact.sub && <p className="text-[11px] text-[#999] mt-0.5">{fact.sub}</p>}
@@ -119,8 +119,8 @@ export default function MainApp() {
           <button className="w-full h-11 rounded-xl bg-[#1A1A1A] text-white text-sm font-medium active:scale-[0.98] transition-transform" style={{ fontFamily: 'inherit' }}
             onClick={() => {
               const text = `My life is ${pct.toFixed(1)}% done. ${days.toLocaleString()} days. #LifeExe`
-              if (navigator.share) navigator.share({ title: 'Life.exe', text })
-              else { navigator.clipboard.writeText(text); alert('Copied!') }
+              if (navigator.share) navigator.share({ title: 'Life.exe', text }).catch(() => {})
+              else { navigator.clipboard.writeText(text).catch(() => {}) }
             }}>Share my life</button>
         </div>
 

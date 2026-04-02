@@ -19,17 +19,17 @@ const pretendard = localFont({
 
 export const metadata: Metadata = {
   title: "Life.exe — 내 인생은 몇 퍼센트?",
-  description: "29,200개의 픽셀. 그게 당신의 인생입니다. 매일 하나의 픽셀에 오늘의 감정을 색칠하세요.",
+  description: "당신의 인생을 숫자로 보여드립니다. 심장 박동, 보낸 계절, 걸은 거리, 그리고 같은 나이에 세상을 바꾼 사람들.",
   openGraph: {
-    title: "Life.exe — 내 인생은 몇 퍼센트?",
-    description: "매일 하나의 픽셀에 오늘의 감정을 색칠하세요.",
+    title: "Life.exe — How far along are you?",
+    description: "Your life in numbers. Heartbeats, seasons, sunsets, and people who changed the world at your age.",
     type: "website",
     locale: "ko_KR",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Life.exe — 내 인생은 몇 퍼센트?",
-    description: "매일 하나의 픽셀에 오늘의 감정을 색칠하세요.",
+    title: "Life.exe — How far along are you?",
+    description: "Your life in numbers. Heartbeats, seasons, sunsets, and the people who changed the world at your age.",
   },
 }
 
