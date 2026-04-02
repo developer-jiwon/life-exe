@@ -16,7 +16,7 @@ export default function FullScreenFact({ children, align = 'left' }: FullScreenF
     if (!el) return
     const observer = new IntersectionObserver(
       ([entry]) => { setVisible(entry.isIntersecting) },
-      { threshold: 0.3 }
+      { threshold: 0.5, rootMargin: '-10% 0px -10% 0px' }
     )
     observer.observe(el)
     return () => observer.disconnect()

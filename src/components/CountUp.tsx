@@ -47,7 +47,7 @@ export default function CountUp({ end, duration = 1500, prefix = '', suffix = ''
           requestAnimationFrame(animate)
         }
       },
-      { threshold: 0.1 }
+      { threshold: 0.5, rootMargin: '-5% 0px -5% 0px' }
     )
 
     observer.observe(el)
