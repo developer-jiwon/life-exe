@@ -78,7 +78,7 @@ export default function MainApp() {
 
   return (
     <div className="min-h-screen">
-      <ScrollBackground />
+      <ScrollBackground birthDate={data.birthDate} />
       <div className="max-w-[600px] mx-auto">
 
         <header className="flex items-center pt-8 px-5 gap-0">
