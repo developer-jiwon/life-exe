@@ -48,6 +48,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ko" className={`${jakarta.variable} ${pretendard.variable}`}>
+      {/* AdSense — 승인 후 활성화
       <head>
         <script
           async
@@ -55,6 +56,7 @@ export default function RootLayout({
           crossOrigin="anonymous"
         />
       </head>
+      */}
       <body className="min-h-screen">{children}</body>
     </html>
   )
