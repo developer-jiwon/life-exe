@@ -148,7 +148,7 @@ export default function MainApp() {
   const FAMOUS_ALIGNS: Array<'left' | 'center' | 'right'> = ['left', 'right', 'center', 'left', 'right']
 
   return (
-    <div className="min-h-screen">
+    <div>
       <ScrollBackground birthDate={data.birthDate} />
       <div className="max-w-[600px] mx-auto">
 
@@ -240,7 +240,7 @@ export default function MainApp() {
         {/* Parent section — Phase 2 */}
         {/* TODO: 부모님 생일 감성 팩트 (남은 시간, 설날, 식사, 전화, 여행) */}
 
-        <footer className="text-center text-[10px] text-[#C0C0C0] pb-8"><p>{t('every_moment', lang)}</p></footer>
+        <footer className="text-center text-[10px] text-[#C0C0C0] pb-4"><p>{t('every_moment', lang)}</p></footer>
       </div>
 
       <BirthDateSheet open={sheetOpen} onClose={() => setSheetOpen(false)} currentDate={data.birthDate} onSave={handleSave} lang={lang} onLangChange={handleLangChange} />
