@@ -472,9 +472,9 @@ function buildFactPool(birthDate: string, lang: Lang): RawFact[] {
     })
   }
 
-  // Chocolate: ~4kg/year (from age 5)
+  // Chocolate: ~2kg/year (from age 5)
   const chocoAge = Math.max(0, age - 5)
-  const chocoKg = (chocoAge * 4).toFixed(0)
+  const chocoKg = (chocoAge * 2).toFixed(0)
   pool.push({
     label: L('먹은 초콜릿', 'Chocolate consumed'),
     value: `~${fn(Number(chocoKg))}kg`,
@@ -1108,7 +1108,7 @@ export function getAllFacts(birthDate: string, lang: Lang = 'ko'): LifeFact[] {
   // 70% fact + 30% emotional
   const TARGET = 35
   const slots = TARGET - pinFirst.length - pinLast.length
-  const emotionalCount = Math.min(Math.round(slots * 0.3), shuffledEmotional.length)
+  const emotionalCount = Math.min(Math.round(slots * 0.2), shuffledEmotional.length)
   const factCount = Math.min(slots - emotionalCount, shuffledFacts.length)
 
   const selected = [
