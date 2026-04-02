@@ -157,35 +157,31 @@ export default function MainApp() {
             <div className="bg-[#1A1A1A] text-white text-[11px] font-bold px-3 py-1.5 rounded-t-lg" style={{ fontFamily: 'var(--font-jakarta)' }}>
               Life.exe
             </div>
-            <button
-              className="bg-[#F0F0F0] text-[#999] text-[11px] px-3 py-1.5 rounded-t-lg ml-1 active:bg-[#E5E5E5] transition-colors"
-              onClick={() => setSheetOpen(true)}
-              style={{ fontFamily: 'var(--font-jakarta)' }}
-            >
-              {t('edit', lang)}
-            </button>
-            {!data.parentsSkipped && (
-              <button
-                className="bg-[#F0F0F0] text-[#999] text-[11px] px-3 py-1.5 rounded-t-lg ml-1 active:bg-[#E5E5E5] transition-colors"
-                onClick={() => setParentSheetOpen(true)}
-                style={{ fontFamily: 'var(--font-jakarta)' }}
-              >
-                {data.parents && data.parents.length > 0 ? (lang === 'ko' ? '부모님' : 'Parents') : (lang === 'ko' ? '+부모님' : '+Parents')}
-              </button>
-            )}
-            <button
-              className="bg-[#F0F0F0] text-[#999] text-[11px] px-3 py-1.5 rounded-t-lg ml-1 active:bg-[#E5E5E5] transition-colors"
-              onClick={() => {
+            {[
+              { label: { ko: '수정', en: 'Edit', ja: '編集', zh: '编辑', hi: 'संपादन' }[lang] || 'Edit', onClick: () => setSheetOpen(true) },
+              ...(!data.parentsSkipped ? [{
+                label: data.parents?.length
+                  ? ({ ko: '부모님', en: 'Parents', ja: '両親', zh: '父母', hi: 'माता-पिता' }[lang] || 'Parents')
+                  : ({ ko: '+부모님', en: '+Parents', ja: '+両親', zh: '+父母', hi: '+माता-पिता' }[lang] || '+Parents'),
+                onClick: () => setParentSheetOpen(true),
+              }] : []),
+              { label: { ko: '공유', en: 'Share', ja: '共有', zh: '分享', hi: 'शेयर' }[lang] || 'Share', onClick: () => {
                 const bd = data.birthDate.replace(/-/g, '')
                 const url = `${window.location.origin}/?b=${bd}`
                 const text = `${pct.toFixed(1)}% of my life. ${days.toLocaleString()} days.\n${url}`
                 if (navigator.share) navigator.share({ title: 'Life.exe', text, url }).catch(() => {})
                 else navigator.clipboard.writeText(url).then(() => alert('Link copied!')).catch(() => {})
-              }}
-              style={{ fontFamily: 'var(--font-jakarta)' }}
-            >
-              Share
-            </button>
+              }},
+            ].map((tab, i) => (
+              <button
+                key={i}
+                className="bg-[#F0F0F0] text-[#999] text-[11px] px-3 py-1.5 rounded-t-lg ml-1 active:bg-[#E5E5E5] transition-colors"
+                onClick={tab.onClick}
+                style={{ fontFamily: 'var(--font-jakarta)' }}
+              >
+                {tab.label}
+              </button>
+            ))}
             <div className="flex-1" />
           </div>
           <div className="h-px bg-[#E5E5E5] mx-5" />
