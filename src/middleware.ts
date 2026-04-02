@@ -33,7 +33,7 @@ export function middleware(request: NextRequest) {
   const noJS = !request.headers.get('sec-fetch-dest') // 브라우저는 sec-fetch-dest 보냄, 크롤러는 안 보냄
   const looksLikeBot = isBot || (noJS && !accept.includes('*/*'))
 
-  if (looksLikeBot && (path === '/' || path === '' || path === '/life')) {
+  if (looksLikeBot && (path === '/' || path === '' || path === '/life' || path === '/start' || path === '/me')) {
     const html = `<!DOCTYPE html>
 <html>
 <head>
