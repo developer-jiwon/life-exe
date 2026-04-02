@@ -14,7 +14,17 @@ interface CountUpProps {
 export default function CountUp({ end, duration = 1500, prefix = '', suffix = '', decimals = 0, className = '' }: CountUpProps) {
   const [count, setCount] = useState(0)
   const ref = useRef<HTMLSpanElement>(null)
-  const started = useRef(false)
+  const prevEnd = useRef(end)
+  const animated = useRef(false)
+
+  // end 값이 바뀌면 리셋
+  useEffect(() => {
+    if (prevEnd.current !== end) {
+      prevEnd.current = end
+      animated.current = false
+      setCount(0)
+    }
+  }, [end])
 
   useEffect(() => {
     const el = ref.current
@@ -22,8 +32,8 @@ export default function CountUp({ end, duration = 1500, prefix = '', suffix = ''
 
     const observer = new IntersectionObserver(
       ([entry]) => {
-        if (entry.isIntersecting && !started.current) {
-          started.current = true
+        if (entry.isIntersecting && !animated.current) {
+          animated.current = true
           const startTime = performance.now()
 
           const animate = (now: number) => {
@@ -35,10 +45,9 @@ export default function CountUp({ end, duration = 1500, prefix = '', suffix = ''
           }
 
           requestAnimationFrame(animate)
-          observer.unobserve(el)
         }
       },
-      { threshold: 0.3 }
+      { threshold: 0.1 }
     )
 
     observer.observe(el)
