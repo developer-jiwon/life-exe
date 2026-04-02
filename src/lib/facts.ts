@@ -305,14 +305,6 @@ function buildFactPool(birthDate: string, lang: Lang): RawFact[] {
     value: `~${nailCm}cm`,
   })
 
-  // Skin regeneration
-  const skinCycles = Math.round(days / 27)
-  pool.push({
-    label: t('skin', lang),
-    value: `${skinCycles}${t('times', lang)}`,
-    sub: t('skin_sub', lang),
-  })
-
   // Digital (smartphone)
   if (smartphoneAge > 0) {
     const phoneChecks = smartphoneAge * 365 * 96
@@ -360,22 +352,6 @@ function buildFactPool(birthDate: string, lang: Lang): RawFact[] {
 
   // --- BODY ---
 
-  // Blood pumped: ~7,570L/day
-  const bloodL = Math.round(days * 7570)
-  pool.push({
-    label: L('심장이 펌프한 혈액', 'Blood your heart pumped'),
-    value: `${fl(bloodL)}L`,
-    sub: L('하루 약 7,570리터, 멈춘 적 없이', '~7,570L per day, never stopped'),
-  })
-
-  // Skin shed: ~0.7kg/year
-  const skinShedKg = (age * 0.7).toFixed(1)
-  pool.push({
-    label: L('벗겨진 피부', 'Skin you\'ve shed'),
-    value: `~${skinShedKg}kg`,
-    sub: L('평생 약 35kg, 먼지의 대부분은 당신', '~35kg in a lifetime — most dust is you'),
-  })
-
   // Tears: ~10L per year (basal + reflex + emotional)
   const tearsL = Math.round(age * 10)
   pool.push({
@@ -399,22 +375,6 @@ function buildFactPool(birthDate: string, lang: Lang): RawFact[] {
     sub: L('하루 평균 약 7,000걸음', '~7,000 steps per day on average'),
   })
 
-  // Red blood cells created: ~200 billion/day
-  const rbcCreated = days * 200_000_000_000
-  pool.push({
-    label: L('만들어진 적혈구', 'Red blood cells created'),
-    value: `${fl(rbcCreated)}`,
-    sub: L('매일 2,000억 개씩, 지금 이 순간에도', '200 billion per day, even right now'),
-  })
-
-  // Cells died and replaced: ~330 billion/day
-  const cellsReplaced = days * 330_000_000_000
-  pool.push({
-    label: L('교체된 세포', 'Cells replaced'),
-    value: `${fl(cellsReplaced)}`,
-    sub: L('매일 3,300억 개의 세포가 새로 태어난다', '330 billion cells reborn each day'),
-  })
-
   // Heart beats today so far
   const now = new Date()
   const minutesSinceMidnight = now.getHours() * 60 + now.getMinutes()
@@ -424,33 +384,6 @@ function buildFactPool(birthDate: string, lang: Lang): RawFact[] {
     label: L('오늘 심장이 뛴 횟수', 'Heartbeats so far today'),
     value: `~${fn(heartbeatsToday)}${t('times', lang)}`,
     sub: L('오늘 하루도 쉬지 않는 중', 'Your heart hasn\'t rested today either'),
-  })
-
-  // Saliva: ~1L/day (from age 1)
-  const salivaL = ageWeighted(birthDate, (a) => {
-    if (a < 1) return 0.3
-    return 1.0
-  })
-  pool.push({
-    label: L('만들어진 침', 'Saliva produced'),
-    value: `~${fn(Math.round(salivaL))}L`,
-    sub: L('하루에 약 1리터, 평생이면 수영장 절반', '~1L/day, half a swimming pool in a lifetime'),
-  })
-
-  // Sneezes: ~4/day average
-  const sneezes = days * 4
-  pool.push({
-    label: L('재채기 횟수', 'Times you sneezed'),
-    value: `~${fn(sneezes)}${t('times', lang)}`,
-    sub: L('시속 160km의 바람을 만들었다', 'Each one at ~160km/h wind speed'),
-  })
-
-  // Yawns: ~8/day
-  const yawns = days * 8
-  pool.push({
-    label: L('하품 횟수', 'Times you yawned'),
-    value: `~${fn(yawns)}${t('times', lang)}`,
-    sub: L('읽는 것만으로도 전염된다', 'Even reading this can be contagious'),
   })
 
   // --- FOOD ---
@@ -810,14 +743,6 @@ function buildFactPool(birthDate: string, lang: Lang): RawFact[] {
     sub: L('매년 약 7~8그루가 당신을 위해 숨 쉰다', '7-8 trees breathe for you each year'),
   })
 
-  // CO2 exhaled: ~200ml/breath, ~15 breaths/min awake
-  const co2Liters = Math.round(breaths * 0.2)
-  pool.push({
-    label: L('내쉰 CO₂', 'CO₂ you exhaled'),
-    value: `~${fn(co2Liters)}L`,
-    sub: L('그 CO₂가 식물의 양분이 된다', 'Plants turned your CO₂ into food'),
-  })
-
   // Distance Earth traveled around sun: ~940M km/year
   const earthKm = Math.round(age * 940_000_000)
   pool.push({
@@ -857,45 +782,6 @@ function buildFactPool(birthDate: string, lang: Lang): RawFact[] {
   })
 
   // --- MORE BODY ---
-
-  // Bones at birth vs now
-  const bones = age < 1 ? 270 : age < 25 ? Math.round(270 - (age * (270 - 206) / 25)) : 206
-  pool.push({
-    label: L('지금 뼈의 개수', 'Bones in your body'),
-    value: `~${bones}${L('개', '')}`,
-    sub: L('태어날 때 270개, 성인은 206개', 'Born with 270, adults have 206'),
-  })
-
-  // Bacteria in your body: ~38 trillion
-  pool.push({
-    label: L('몸속 미생물', 'Microbes in your body'),
-    value: `~38${L('조', 'T')}`,
-    sub: L('인간 세포보다 더 많다', 'More than your own human cells'),
-  })
-
-  // Blood cycles through body: ~1,000 times/day
-  const bloodCycles = days * 1000
-  pool.push({
-    label: L('혈액이 몸을 순환한 횟수', 'Times blood circulated your body'),
-    value: `${fl(bloodCycles)}${t('times', lang)}`,
-    sub: L('하루에 약 1,000번', '~1,000 times per day'),
-  })
-
-  // Taste buds replaced: every 10 days
-  const tasteBudCycles = Math.round(days / 10)
-  pool.push({
-    label: L('미각 세포 교체 횟수', 'Taste bud regenerations'),
-    value: `~${fn(tasteBudCycles)}${t('times', lang)}`,
-    sub: L('10일마다 새로운 맛의 시작', 'New taste buds every 10 days'),
-  })
-
-  // Distance blood traveled: ~19,000km/day
-  const bloodTravelKm = days * 19000
-  pool.push({
-    label: L('혈액이 이동한 거리', 'Distance your blood traveled'),
-    value: `${fl(bloodTravelKm)}km`,
-    sub: L('하루 약 19,000km, 지구 반 바퀴', '~19,000km/day — halfway around Earth'),
-  })
 
   // --- MISC LIFE ---
 
@@ -1012,12 +898,161 @@ function buildFactPool(birthDate: string, lang: Lang): RawFact[] {
     sub: L('내일도 해는 뜬다', 'The sun will rise again tomorrow'),
   })
 
-  // Your unique genome
-  pool.push({
-    label: L('당신의 DNA 조합 확률', 'Odds of your exact DNA'),
-    value: L('400조 분의 1', '1 in 400 trillion'),
-    sub: L('당신이 태어난 것 자체가 기적', 'Your very existence is a miracle'),
-  })
+  // =========================================================================
+  // EMOTIONAL / RELATABLE FACTS
+  // =========================================================================
+
+  // First steps (estimated age 1)
+  if (age > 1) {
+    const daysSinceFirstSteps = (age - 1) * 365
+    pool.push({
+      label: L('첫 걸음마를 뗀 날로부터', 'Since your first steps'),
+      value: `~${fn(daysSinceFirstSteps)}${t('days', lang)}`,
+      sub: L('넘어져도 다시 일어났다', 'You fell, and got back up'),
+    })
+  }
+
+  // First word (estimated age 1)
+  if (age > 1) {
+    const daysSinceFirstWord = (age - 1) * 365
+    pool.push({
+      label: L('처음 말을 한 날로부터', 'Since your first word'),
+      value: `~${fn(daysSinceFirstWord)}${t('days', lang)}`,
+      sub: L("아마 '엄마'였을 거다", "Probably 'mama'"),
+    })
+  }
+
+  // Time in school (age 7-18, ~11 years, 8h/day)
+  if (age >= 7) {
+    const schoolSpan = Math.min(age, 18) - 7
+    pool.push({
+      label: L('학교에서 보낸 시간', 'Time spent in school'),
+      value: age >= 18 ? `~11${t('years', lang)}` : `~${schoolSpan}${t('years', lang)}`,
+      sub: L('교실 창밖을 본 시간은 별도', 'Time staring out the window not included'),
+    })
+  }
+
+  // Watching rain by the window (~100 rainy days/year, 10min each)
+  {
+    const rainWatchHours = Math.round(age * 100 * 10 / 60)
+    pool.push({
+      label: L('비 오는 날 창밖을 본 시간', 'Time watching rain by the window'),
+      value: `~${fn(rainWatchHours)}${t('hours_unit', lang)}`,
+      sub: L('빗소리는 왜 위로가 될까', 'Why does rain sound like comfort?'),
+    })
+  }
+
+  // Waking at dawn (~30 times/year)
+  {
+    const dawnWakes = age * 30
+    pool.push({
+      label: L('새벽에 깨어본 횟수', 'Times you woke at dawn'),
+      value: `~${fn(dawnWakes)}${t('times', lang)}`,
+      sub: L('천장을 보며 생각에 잠긴 밤들', 'Staring at the ceiling, lost in thought'),
+    })
+  }
+
+  // Replaying favorite song (~3/day from age 15)
+  if (age > 15) {
+    const songReplays = (age - 15) * 365 * 3
+    pool.push({
+      label: L('좋아하는 노래를 반복 재생한 횟수', 'Times you replayed your favorite song'),
+      value: `~${fn(songReplays)}${t('times', lang)}`,
+      sub: L('같은 노래도 매번 다르게 들린다', 'Same song, different feeling every time'),
+    })
+  }
+
+  // Packages waited for (~30/year from age 18)
+  if (age > 18) {
+    const packages = (age - 18) * 30
+    pool.push({
+      label: L('택배를 기다린 횟수', 'Packages waited for'),
+      value: `~${fn(packages)}${t('times', lang)}`,
+      sub: L('문 앞에 도착하면 설레는 마음', 'That doorbell excitement'),
+    })
+  }
+
+  // Missing someone (~100/year from age 5)
+  if (age >= 5) {
+    const missSomeone = (age - 5) * 100
+    pool.push({
+      label: L('누군가가 보고 싶었던 순간', 'Moments you missed someone'),
+      value: `~${fn(missSomeone)}${t('times', lang)}`,
+      sub: L('그리움은 사랑의 다른 이름', 'Missing someone is just love with distance'),
+    })
+  }
+
+  // Feeling grateful (~3/day)
+  {
+    const gratitudes = days * 3
+    pool.push({
+      label: L('고마움을 느낀 횟수', 'Times you felt grateful'),
+      value: `~${fn(gratitudes)}${t('times', lang)}`,
+      sub: L('작은 것에 감사할수록 많아진다', 'The more you notice, the more there is'),
+    })
+  }
+
+  // Time alone (~2h/day from age 15)
+  if (age > 15) {
+    const aloneHours = (age - 15) * 365 * 2
+    const aloneYears = (aloneHours / (365 * 24)).toFixed(1)
+    pool.push({
+      label: L('혼자만의 시간', 'Hours spent alone'),
+      value: `~${aloneYears}${t('years', lang)}`,
+      sub: L('가끔은 혼자가 필요하다', 'Sometimes solitude is what you need'),
+    })
+  }
+
+  // Deep sighs (~5/day)
+  {
+    const sighs = days * 5
+    pool.push({
+      label: L('깊은 한숨', 'Deep sighs'),
+      value: `~${fn(sighs)}${t('times', lang)}`,
+      sub: L('한숨은 감정의 리셋 버튼', "A sigh is your body's reset button"),
+    })
+  }
+
+  // Thoughts before sleep (~10min/day)
+  {
+    const sleepThoughtHours = days * 10 / 60
+    const sleepThoughtYears = (sleepThoughtHours / (365 * 24)).toFixed(1)
+    pool.push({
+      label: L('잠들기 전 생각에 빠진 시간', 'Time lost in thought before sleep'),
+      value: `~${sleepThoughtYears}${t('years', lang)}`,
+      sub: L('그때 떠오른 아이디어는 어디 갔을까', 'Where did those midnight ideas go?'),
+    })
+  }
+
+  // First love (~age 15)
+  if (age > 15) {
+    const daysSinceFirstLove = (age - 15) * 365
+    pool.push({
+      label: L('처음 가슴이 뛴 날로부터', 'Since your heart first raced for someone'),
+      value: `~${fn(daysSinceFirstLove)}${t('days', lang)}`,
+      sub: L('그 떨림을 기억하나요', 'Do you remember that feeling?'),
+    })
+  }
+
+  // Days couldn't stop laughing (~5/year)
+  {
+    const laughDays = age * 5
+    pool.push({
+      label: L('웃음이 멈추지 않았던 날', "Days you couldn't stop laughing"),
+      value: `~${fn(laughDays)}${t('days', lang)}`,
+      sub: L('배가 아플 때까지', 'Until your stomach hurt'),
+    })
+  }
+
+  // Stargazing nights (~20/year)
+  {
+    const starNights = age * 20
+    pool.push({
+      label: L('별을 올려다본 밤', 'Nights you looked up at the stars'),
+      value: `~${fn(starNights)}${t('times', lang)}`,
+      sub: L('같은 별인데 매번 다르다', 'Same stars, different every time'),
+    })
+  }
 
   // Smiles received: ~15/day
   const smiles = ageWeighted(birthDate, (a) => {
