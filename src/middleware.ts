@@ -18,7 +18,8 @@ export function middleware(request: NextRequest) {
   const ua = request.headers.get('user-agent') || ''
   const isBot = BOT_AGENTS.some(bot => ua.toLowerCase().includes(bot.toLowerCase()))
 
-  if (isBot && request.nextUrl.pathname === '/') {
+  const path = request.nextUrl.pathname
+  if (isBot && (path === '/' || path === '' || path === '/life')) {
     const html = `<!DOCTYPE html>
 <html>
 <head>
@@ -50,5 +51,5 @@ export function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: '/',
+  matcher: ['/', '/life'],
 }
