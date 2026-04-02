@@ -185,7 +185,7 @@ export function getAllFacts(birthDate: string, lang: Lang = 'ko'): LifeFact[] {
     add(t('phone', lang), `~${fn(phoneChecks)}${t('times', lang)}`, t('phone_sub', lang))
 
     const photos = smartphoneAge * 365 * 4
-    add(t('photos', lang), `~${fn(photos)}`)
+    add(t('photos', lang), `~${fn(photos)}${lang === 'ko' ? '장' : ''}`)
 
     const screenHours = smartphoneAge * 365 * 4.5
     const screenYears = (screenHours / (365 * 24)).toFixed(1)
