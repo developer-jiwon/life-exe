@@ -159,12 +159,6 @@ export default function MainApp() {
             </div>
             {[
               { label: { ko: '수정', en: 'Edit', ja: '編集', zh: '编辑', hi: 'संपादन' }[lang] || 'Edit', onClick: () => setSheetOpen(true) },
-              ...(!data.parentsSkipped ? [{
-                label: data.parents?.length
-                  ? ({ ko: '부모님', en: 'Parents', ja: '両親', zh: '父母', hi: 'माता-पिता' }[lang] || 'Parents')
-                  : ({ ko: '+부모님', en: '+Parents', ja: '+両親', zh: '+父母', hi: '+माता-पिता' }[lang] || '+Parents'),
-                onClick: () => setParentSheetOpen(true),
-              }] : []),
               { label: { ko: '공유', en: 'Share', ja: '共有', zh: '分享', hi: 'शेयर' }[lang] || 'Share', onClick: () => {
                 const bd = data.birthDate.replace(/-/g, '')
                 const url = `${window.location.origin}/?b=${bd}`
@@ -186,6 +180,7 @@ export default function MainApp() {
           </div>
           <div className="h-px bg-[#E5E5E5] mx-5" />
         </header>
+        <div className="h-4" />
 
         {/* Hero */}
         <div className="text-center px-5 py-2">
@@ -242,52 +237,13 @@ export default function MainApp() {
           </div>
         )}
 
-        {/* Parent section */}
-        {!data.parentsSkipped && data.parents && data.parents.length > 0 && (
-          <>
-            <FullScreenFact align="center">
-              <p className="text-[10px] text-[#999] tracking-wider uppercase">for those who matter</p>
-              <p className="text-lg font-bold text-[#1A1A1A] mt-0.5" style={{ fontFamily: 'var(--font-jakarta)' }}>
-                {lang === 'ko' ? '부모님과 함께할 수 있는 시간' : lang === 'en' ? 'Time left with your parents' : lang === 'ja' ? '親と過ごせる時間' : lang === 'zh' ? '与父母在一起的时间' : 'माता-पिता के साथ बचा समय'}
-              </p>
-              <p className="text-[11px] text-[#999] mt-1">
-                {lang === 'ko' ? '당연한 건 없습니다' : lang === 'en' ? 'Nothing is guaranteed' : lang === 'ja' ? '当たり前のことは何もない' : lang === 'zh' ? '没有什么是理所当然的' : 'कुछ भी निश्चित नहीं है'}
-              </p>
-            </FullScreenFact>
-            {data.parents.map((parent) => {
-              const parentFacts = getParentFacts(parent, lang)
-              return parentFacts.map((fact, idx) => {
-                const sizeClass = { sm: 'text-xl', md: 'text-2xl', lg: 'text-3xl', xl: 'text-4xl' }[fact.size]
-                return (
-                  <FullScreenFact key={`${parent.label}-${idx}`} align={fact.align}>
-                    <p className="text-[11px] text-[#999] mb-0.5">{fact.label}</p>
-                    <p className={`${sizeClass} font-bold text-[#1A1A1A] leading-tight`} style={{ fontFamily: 'var(--font-jakarta)' }}>{fact.value}</p>
-                    {fact.sub && <p className="text-[11px] text-[#999] mt-0.5">{fact.sub}</p>}
-                  </FullScreenFact>
-                )
-              })
-            })}
-            <FullScreenFact align="center">
-              <p className="text-xs text-[#666]">
-                {lang === 'ko' ? '한 번 더 전화해 보세요' : lang === 'en' ? 'Give them a call today' : lang === 'ja' ? 'もう一度電話してみてください' : lang === 'zh' ? '今天给他们打个电话吧' : 'आज उन्हें फ़ोन करें'}
-              </p>
-              <button
-                onClick={() => setParentSheetOpen(true)}
-                className="mt-2 text-[10px] text-[#B0B0B0] underline underline-offset-2"
-                style={{ fontFamily: 'inherit' }}
-              >
-                {t('edit', lang)}
-              </button>
-            </FullScreenFact>
-          </>
-        )}
-
+        {/* Parent section — Phase 2 */}
+        {/* TODO: 부모님 생일 감성 팩트 (남은 시간, 설날, 식사, 전화, 여행) */}
 
         <footer className="text-center text-[10px] text-[#C0C0C0] pb-8"><p>{t('every_moment', lang)}</p></footer>
       </div>
 
       <BirthDateSheet open={sheetOpen} onClose={() => setSheetOpen(false)} currentDate={data.birthDate} onSave={handleSave} lang={lang} onLangChange={handleLangChange} />
-      <ParentDateSheet open={parentSheetOpen} onClose={() => setParentSheetOpen(false)} currentParents={data.parents} onSave={handleParentSave} />
     </div>
   )
 }
