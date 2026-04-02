@@ -29,11 +29,19 @@ export default function MainApp() {
   const [data, setData] = useState<LifeData | null>(null)
   const [sheetOpen, setSheetOpen] = useState(false)
 
-  useEffect(() => { setData(loadData()) }, [])
+  useEffect(() => {
+    const d = loadData()
+    setData(d)
+    // 첫 방문(디폴트 생일)이면 바텀시트 자동 오픈
+    if (d.birthDate === '1994-04-30' && !localStorage.getItem('life-exe-custom')) {
+      setTimeout(() => setSheetOpen(true), 800)
+    }
+  }, [])
 
   const handleSave = useCallback((date: string) => {
     if (!date || !data) return
     saveData({ ...data, birthDate: date, onboardingDone: true })
+    localStorage.setItem('life-exe-custom', 'true')
     setData(loadData())
     setSheetOpen(false)
   }, [data])
