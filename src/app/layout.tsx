@@ -48,22 +48,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ko" className={`${jakarta.variable} ${pretendard.variable}`}>
-      <head>
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `
-              try {
-                var s = document.createElement('script');
-                s.src = 'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4588308927468413';
-                s.async = true;
-                s.crossOrigin = 'anonymous';
-                s.onerror = function() {};
-                document.head.appendChild(s);
-              } catch(e) {}
-            `,
-          }}
-        />
-      </head>
+      {/* AdSense — 도메인 승인 후 활성화. ca-pub-4588308927468413 */}
       <body className="min-h-screen">{children}</body>
     </html>
   )
