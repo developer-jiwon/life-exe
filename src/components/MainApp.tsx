@@ -30,50 +30,32 @@ function getParentFacts(parent: { label: string; date: string }, lang: Lang): Pa
   const ageMs = now.getTime() - birth.getTime()
   const parentAge = Math.floor(ageMs / (365.25 * 24 * 60 * 60 * 1000))
   const remainingYears = Math.max(0, PARENT_LIFE_EXPECTANCY - parentAge)
-  const remainingNewYears = remainingYears
-  const remainingBirthdays = remainingYears
+
   const meetingsPerYear = 5
   const remainingMeetings = remainingYears * meetingsPerYear
+  const mealsLeft = remainingYears * meetingsPerYear * 2
+  const phoneCalls = remainingYears * 24
+  const tripsLeft = remainingYears
+  const p = parent.label
+  const ko = lang === 'ko'
 
-  const aligns: Array<'left' | 'center' | 'right'> = ['left', 'right', 'center', 'left', 'right']
+  const aligns: Array<'left' | 'center' | 'right'> = ['left', 'right', 'center', 'left', 'right', 'center', 'left', 'right']
+  let idx = 0
+  const facts: ParentFact[] = []
 
-  const facts: ParentFact[] = [
-    {
-      label: `${parent.label}${lang === 'ko' ? '의 나이' : lang === 'ja' ? 'の年齢' : lang === 'zh' ? '的年龄' : lang === 'hi' ? ' की उम्र' : "'s age"}`,
-      value: `${parentAge}${lang === 'ko' ? '세' : lang === 'ja' ? '歳' : lang === 'zh' ? '岁' : lang === 'hi' ? ' वर्ष' : ''}`,
-      sub: t('life_expectancy', lang, PARENT_LIFE_EXPECTANCY),
-      size: 'lg',
-      align: aligns[0],
-    },
-    {
-      label: `${parent.label}${lang === 'ko' ? '와 남은 시간' : lang === 'ja' ? 'と残りの時間' : lang === 'zh' ? '剩余的时间' : lang === 'hi' ? ' के साथ बचा समय' : ' — time left'}`,
-      value: `~${remainingYears}${t('years', lang)}`,
-      sub: remainingYears > 0 ? (lang === 'ko' ? '이 시간은 생각보다 짧습니다' : lang === 'en' ? 'This time is shorter than you think' : lang === 'ja' ? 'この時間は思ったより短い' : lang === 'zh' ? '这段时间比你想的要短' : 'यह समय आपकी सोच से कम है') : undefined,
-      size: 'xl',
-      align: aligns[1],
-    },
-    {
-      label: `${parent.label}${lang === 'ko' ? '와 보낼 수 있는 설날' : lang === 'en' ? " — New Year's left" : lang === 'ja' ? 'と過ごせる正月' : lang === 'zh' ? '能一起过的新年' : ' — बचे नए साल'}`,
-      value: `~${remainingNewYears}${t('times', lang)}`,
-      sub: lang === 'ko' ? '매년 당연하지 않은 설날' : lang === 'en' ? 'Each one is not guaranteed' : lang === 'ja' ? '毎年当たり前ではない正月' : lang === 'zh' ? '每一次都不是理所当然' : 'हर बार निश्चित नहीं',
-      size: 'md',
-      align: aligns[2],
-    },
-    {
-      label: `${parent.label}${lang === 'ko' ? '와 보낼 수 있는 생일' : lang === 'en' ? ' — birthdays left' : lang === 'ja' ? 'と過ごせる誕生日' : lang === 'zh' ? '能一起过的生日' : ' — बचे जन्मदिन'}`,
-      value: `~${remainingBirthdays}${t('times', lang)}`,
-      sub: lang === 'ko' ? '함께 축하할 수 있는 날들' : lang === 'en' ? 'Days you can celebrate together' : lang === 'ja' ? '一緒にお祝いできる日々' : lang === 'zh' ? '能一起庆祝的日子' : 'साथ मनाने के दिन',
-      size: 'md',
-      align: aligns[3],
-    },
-    {
-      label: lang === 'ko' ? `1년에 평균 ${meetingsPerYear}번 만난다면` : lang === 'en' ? `If you meet ~${meetingsPerYear}x a year` : lang === 'ja' ? `年平均${meetingsPerYear}回会うなら` : lang === 'zh' ? `如果一年见${meetingsPerYear}次` : `अगर साल में ${meetingsPerYear} बार मिलें`,
-      value: lang === 'ko' ? `앞으로 ~${remainingMeetings}번` : `~${remainingMeetings}${t('times', lang)}`,
-      sub: `${parent.label}${lang === 'ko' ? '와 만날 수 있는 횟수' : lang === 'en' ? ' — meetings left' : lang === 'ja' ? 'と会える回数' : lang === 'zh' ? '能见面的次数' : ' — बचे मिलने के मौक़े'}`,
-      size: 'lg',
-      align: aligns[4],
-    },
-  ]
+  function add(label: string, value: string, sub?: string, size: ParentFact['size'] = 'lg') {
+    facts.push({ label, value, sub, size, align: aligns[idx % aligns.length] })
+    idx++
+  }
+
+  add(p, `${parentAge}${ko ? '세' : ''}`, undefined, 'xl')
+  add(ko ? `${p}와 남은 시간` : `Time left with ${p}`, `~${remainingYears}${t('years', lang)}`, ko ? '이 시간은 생각보다 짧습니다' : 'Shorter than you think', 'xl')
+  add(ko ? `${p}와 보낼 수 있는 설날` : `New Years with ${p}`, `~${remainingYears}${t('times', lang)}`, ko ? '매년 당연하지 않은 설날' : 'Each one matters', 'md')
+  add(ko ? `${p}와 보낼 수 있는 생일` : `Birthdays with ${p}`, `~${remainingYears}${t('times', lang)}`, ko ? '함께 축하할 수 있는 날들' : 'Days to celebrate together', 'md')
+  add(ko ? `1년에 ${meetingsPerYear}번 만난다면` : `Meeting ${meetingsPerYear}x/year`, `~${remainingMeetings}${t('times', lang)}`, ko ? `${p}와 만날 수 있는 횟수` : `Meetings left`, 'lg')
+  add(ko ? `${p}와 함께 할 수 있는 식사` : `Meals with ${p}`, `~${mealsLeft}${ko ? '끼' : ' meals'}`, ko ? '만날 때마다 두 끼씩' : '2 meals per visit', 'md')
+  add(ko ? `${p}에게 전화할 수 있는 횟수` : `Calls to ${p}`, `~${phoneCalls}${t('times', lang)}`, ko ? '한 달에 2번이라면' : '2 calls/month', 'lg')
+  add(ko ? `${p}와 여행` : `Trips with ${p}`, `~${tripsLeft}${t('times', lang)}`, ko ? '1년에 1번이라면' : 'Once a year', 'md')
 
   return facts
 }
@@ -170,20 +152,44 @@ export default function MainApp() {
       <ScrollBackground birthDate={data.birthDate} />
       <div className="max-w-[600px] mx-auto">
 
-        <header className="flex items-center pt-8 px-5 gap-0">
-          <div className="bg-[#1A1A1A] text-white text-xs font-bold px-4 py-2 rounded-t-lg" style={{ fontFamily: 'var(--font-jakarta)' }}>
-            Life.exe
+        <header className="sticky top-0 z-40 bg-white/90 backdrop-blur-sm">
+          <div className="flex items-center pt-3 pb-0 px-5 gap-0 max-w-[600px] mx-auto">
+            <div className="bg-[#1A1A1A] text-white text-[11px] font-bold px-3 py-1.5 rounded-t-lg" style={{ fontFamily: 'var(--font-jakarta)' }}>
+              Life.exe
+            </div>
+            <button
+              className="bg-[#F0F0F0] text-[#999] text-[11px] px-3 py-1.5 rounded-t-lg ml-1 active:bg-[#E5E5E5] transition-colors"
+              onClick={() => setSheetOpen(true)}
+              style={{ fontFamily: 'var(--font-jakarta)' }}
+            >
+              {t('edit', lang)}
+            </button>
+            {!data.parentsSkipped && (
+              <button
+                className="bg-[#F0F0F0] text-[#999] text-[11px] px-3 py-1.5 rounded-t-lg ml-1 active:bg-[#E5E5E5] transition-colors"
+                onClick={() => setParentSheetOpen(true)}
+                style={{ fontFamily: 'var(--font-jakarta)' }}
+              >
+                {data.parents && data.parents.length > 0 ? (lang === 'ko' ? '부모님' : 'Parents') : (lang === 'ko' ? '+부모님' : '+Parents')}
+              </button>
+            )}
+            <button
+              className="bg-[#F0F0F0] text-[#999] text-[11px] px-3 py-1.5 rounded-t-lg ml-1 active:bg-[#E5E5E5] transition-colors"
+              onClick={() => {
+                const bd = data.birthDate.replace(/-/g, '')
+                const url = `${window.location.origin}/?b=${bd}`
+                const text = `${pct.toFixed(1)}% of my life. ${days.toLocaleString()} days.\n${url}`
+                if (navigator.share) navigator.share({ title: 'Life.exe', text, url }).catch(() => {})
+                else navigator.clipboard.writeText(url).then(() => alert('Link copied!')).catch(() => {})
+              }}
+              style={{ fontFamily: 'var(--font-jakarta)' }}
+            >
+              Share
+            </button>
+            <div className="flex-1" />
           </div>
-          <button
-            className="bg-[#F0F0F0] text-[#999] text-xs px-4 py-2 rounded-t-lg ml-1 active:bg-[#E5E5E5] transition-colors"
-            onClick={() => setSheetOpen(true)}
-            style={{ fontFamily: 'var(--font-jakarta)' }}
-          >
-            {t('edit', lang)}
-          </button>
-          <div className="flex-1" />
+          <div className="h-px bg-[#E5E5E5] mx-5" />
         </header>
-        <div className="h-px bg-[#E5E5E5] mx-5 mb-2" />
 
         {/* Hero */}
         <div className="text-center px-5 py-2">
@@ -222,43 +228,23 @@ export default function MainApp() {
           <p className="text-xs text-[#666] mt-2">{t('today_msg', lang)}</p>
         </FullScreenFact>
 
-        <div className="px-5 py-4 space-y-2">
-          {sharedMode && (
+        {/* Shared mode: try my birthday */}
+        {sharedMode && (
+          <div className="px-5 py-3 text-center">
             <button
-              className="w-full h-11 rounded-xl bg-[#1A1A1A] text-white text-sm font-medium active:scale-[0.98] transition-transform"
-              style={{ fontFamily: 'inherit' }}
+              className="text-[12px] text-[#1A1A1A] font-medium underline underline-offset-2 active:text-[#666]"
+              style={{ fontFamily: 'var(--font-jakarta)' }}
               onClick={() => {
                 window.history.replaceState(null, '', window.location.pathname)
                 setSharedMode(false)
-                const d = loadData()
-                setData(d)
-                if (!localStorage.getItem('life-exe-custom')) {
-                  setTimeout(() => setSheetOpen(true), 300)
-                }
+                setData(loadData())
+                if (!localStorage.getItem('life-exe-custom')) setTimeout(() => setSheetOpen(true), 300)
               }}
             >
               {t('try_my_birthday', lang)}
             </button>
-          )}
-          <button
-            className={`w-full h-11 rounded-xl text-sm font-medium active:scale-[0.98] transition-transform ${
-              sharedMode ? 'bg-[#F0F0F0] text-[#1A1A1A]' : 'bg-[#1A1A1A] text-white'
-            }`}
-            style={{ fontFamily: 'inherit' }}
-            onClick={() => {
-              const bd = data.birthDate.replace(/-/g, '')
-              const url = `${window.location.origin}/?b=${bd}`
-              const text = `${pct.toFixed(1)}% of my life. ${days.toLocaleString()} days.\n${url}`
-              if (navigator.share) {
-                navigator.share({ title: 'Life.exe', text, url }).catch(() => {})
-              } else {
-                navigator.clipboard.writeText(url).then(() => alert('Link copied!')).catch(() => {})
-              }
-            }}
-          >
-            {t('share', lang)}
-          </button>
-        </div>
+          </div>
+        )}
 
         {/* Parent section */}
         {!data.parentsSkipped && data.parents && data.parents.length > 0 && (
@@ -300,21 +286,6 @@ export default function MainApp() {
           </>
         )}
 
-        {/* Parent prompt - show when no parents set and not skipped */}
-        {!data.parentsSkipped && (!data.parents || data.parents.length === 0) && (
-          <FullScreenFact align="center">
-            <p className="text-[11px] text-[#999] mb-1">
-              {lang === 'ko' ? '부모님과 함께할 수 있는 시간' : lang === 'en' ? 'Time left with your parents' : lang === 'ja' ? '親と過ごせる時間' : lang === 'zh' ? '与父母在一起的时间' : 'माता-पिता के साथ बचा समय'}
-            </p>
-            <button
-              onClick={() => setParentSheetOpen(true)}
-              className="w-8 h-8 rounded-full bg-[#F5F5F5] text-[#999] text-lg leading-none active:bg-[#E5E5E5] transition-colors"
-              style={{ fontFamily: 'inherit' }}
-            >
-              +
-            </button>
-          </FullScreenFact>
-        )}
 
         <footer className="text-center text-[10px] text-[#C0C0C0] pb-8"><p>{t('every_moment', lang)}</p></footer>
       </div>
