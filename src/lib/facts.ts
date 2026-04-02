@@ -49,7 +49,7 @@ function seededShuffle<T>(arr: T[], rng: () => number): T[] {
 // Generate a numeric seed from birthDate + today's date
 function dateSeed(birthDate: string): number {
   const today = new Date()
-  const dateStr = `${birthDate}-${today.getFullYear()}-${today.getMonth()}-${today.getDate()}`
+  const dateStr = `${birthDate}-${Date.now()}`
   let hash = 0
   for (let i = 0; i < dateStr.length; i++) {
     hash = ((hash << 5) - hash + dateStr.charCodeAt(i)) | 0
