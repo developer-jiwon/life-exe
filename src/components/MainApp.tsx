@@ -229,7 +229,7 @@ export default function MainApp() {
                 window.history.replaceState(null, '', window.location.pathname)
                 setSharedMode(false)
                 setData(loadData())
-                if (!localStorage.getItem('life-exe-custom')) setTimeout(() => setSheetOpen(true), 300)
+                setTimeout(() => setSheetOpen(true), 300)
               }}
             >
               {t('try_my_birthday', lang)}
