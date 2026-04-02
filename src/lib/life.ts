@@ -1,7 +1,13 @@
-const LIFE_EXPECTANCY = 83
+const LIFE_EXPECTANCY_BY_LANG: Record<string, number> = {
+  ko: 84,  // 한국
+  ja: 85,  // 일본
+  zh: 78,  // 중국
+  hi: 72,  // 인도
+  en: 79,  // 미국/영국
+}
 
-export function getLifeExpectancy(): number {
-  return LIFE_EXPECTANCY
+export function getLifeExpectancy(lang?: string): number {
+  return LIFE_EXPECTANCY_BY_LANG[lang ?? 'en'] ?? 79
 }
 
 export function getAge(birthDate: string): number {
@@ -22,13 +28,13 @@ export function getDaysLived(birthDate: string): number {
   return Math.floor(diff / (1000 * 60 * 60 * 24))
 }
 
-export function getTotalDays(birthDate: string): number {
-  return getLifeExpectancy() * 365
+export function getTotalDays(birthDate: string, lang?: string): number {
+  return getLifeExpectancy(lang) * 365
 }
 
-export function getLifePercentage(birthDate: string): number {
+export function getLifePercentage(birthDate: string, lang?: string): number {
   const lived = getDaysLived(birthDate)
-  const total = getTotalDays(birthDate)
+  const total = getTotalDays(birthDate, lang)
   return Math.min((lived / total) * 100, 100)
 }
 

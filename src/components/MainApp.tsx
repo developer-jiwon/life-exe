@@ -137,10 +137,10 @@ export default function MainApp() {
 
   if (!data) return <div className="flex items-center justify-center min-h-screen bg-white"><div className="w-5 h-5 border-2 border-[#E5E5E5] border-t-[#1A1A1A] rounded-full animate-spin" /></div>
 
-  const pct = getLifePercentage(data.birthDate)
+  const pct = getLifePercentage(data.birthDate, lang)
   const age = getAge(data.birthDate)
   const days = getDaysLived(data.birthDate)
-  const totalDays = getTotalDays(data.birthDate)
+  const totalDays = getTotalDays(data.birthDate, lang)
   const famous = getFamousPeople(age, 5)
   const facts = getAllFacts(data.birthDate, lang)
   const expectancy = Math.ceil(totalDays / 365)
