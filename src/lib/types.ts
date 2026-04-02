@@ -5,12 +5,21 @@ export interface LifeData {
   gender?: 'male' | 'female' | 'other'
   pixels: Record<string, Mood>
   onboardingDone: boolean
+  parents?: { label: string; date: string }[]
+  parentsSkipped?: boolean
 }
 
 export interface FamousPerson {
   name: string
   nameEn: string
+  nameJa?: string
+  nameZh?: string
+  nameHi?: string
   achievement: string
+  achievementEn?: string
+  achievementJa?: string
+  achievementZh?: string
+  achievementHi?: string
   age: number
   category: 'tech' | 'art' | 'sports' | 'business' | 'science' | 'music' | 'politics' | 'entertainment'
 }

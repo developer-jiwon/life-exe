@@ -72,6 +72,14 @@ const T: Record<string, Record<Lang, string>> = {
   'people_sub': { ko: '그중 이름을 아는 사람은 ~150명', en: 'You know ~150 by name', ja: 'そのうち名前を知っているのは約150人', zh: '其中知道名字的约150人', hi: 'जिनमें ~150 का नाम जानते हैं' },
   'to100': { ko: '100세까지', en: 'Until 100', ja: '100歳まで', zh: '到100岁', hi: '100 साल तक' },
   'to100_sub': { ko: '아직 {0}% 남았다', en: 'Still {0}% left', ja: 'まだ{0}%残っている', zh: '还剩{0}%', hi: 'अभी {0}% बाकी है' },
+  // famous person
+  'famous_at_your_age': { ko: '당신의 나이({0}세)에...', en: 'At your age ({0})...', ja: 'あなたの年齢({0}歳)で...', zh: '在你这个年纪({0}岁)...', hi: 'आपकी उम्र ({0}) में...' },
+  'famous_suffix': { ko: '은(는)', en: '', ja: 'は', zh: '', hi: '' },
+  'famous_years_ago': { ko: '{0}세 — 지금보다 {1}년 전', en: 'age {0} — {1}y ago', ja: '{0}歳 — {1}年前', zh: '{0}岁 — {1}年前', hi: '{0} वर्ष — {1} साल पहले' },
+  'famous_years_left': { ko: '{0}세 — 아직 {1}년 남았다', en: 'age {0} — {1}y from now', ja: '{0}歳 — あと{1}年', zh: '{0}岁 — 还有{1}年', hi: '{0} वर्ष — अभी {1} साल बाकी' },
+  'famous_right_now': { ko: '바로 지금 당신의 나이!', en: 'Right now. Your age!', ja: '今まさに、あなたの年齢！', zh: '就是现在，你的年龄！', hi: 'अभी। आपकी उम्र!' },
+  'save': { ko: '저장', en: 'Save', ja: '保存', zh: '保存', hi: 'सेव करें' },
+  'try_my_birthday': { ko: '내 생일로 해보기', en: 'Try with my birthday', ja: '自分の誕生日で試す', zh: '用我的生日试试', hi: 'मेरे जन्मदिन से आज़माएं' },
   // units
   'days': { ko: '일', en: ' days', ja: '日', zh: '天', hi: ' दिन' },
   'times': { ko: '번', en: ' times', ja: '回', zh: '次', hi: ' बार' },
@@ -96,4 +104,39 @@ export function getLangFromStorage(): Lang {
 export function saveLang(lang: Lang): void {
   if (typeof window === 'undefined') return
   localStorage.setItem('life-exe-lang', lang)
+}
+
+/** Locale string for Intl formatting */
+const LOCALE_MAP: Record<Lang, string> = {
+  ko: 'ko-KR', en: 'en-US', ja: 'ja-JP', zh: 'zh-CN', hi: 'hi-IN',
+}
+
+export function fmtNum(n: number, lang: Lang): string {
+  return n.toLocaleString(LOCALE_MAP[lang])
+}
+
+export function fmtLargeNum(n: number, lang: Lang): string {
+  const locale = LOCALE_MAP[lang]
+  if (lang === 'ko' || lang === 'ja' || lang === 'zh') {
+    if (n >= 1_000_000_000_000) return `~${(n / 1_000_000_000_000).toFixed(1)}${lang === 'ko' ? '조' : lang === 'ja' ? '兆' : '万亿'}`
+    if (n >= 100_000_000) return `~${Math.round(n / 100_000_000)}${lang === 'ko' ? '억' : lang === 'ja' ? '億' : '亿'}`
+    if (n >= 10_000) return `~${n.toLocaleString(locale)}`
+    return n.toLocaleString(locale)
+  }
+  if (n >= 1_000_000_000) return `~${(n / 1_000_000_000).toFixed(1)}B`
+  if (n >= 1_000_000) return `~${(n / 1_000_000).toFixed(1)}M`
+  if (n >= 10_000) return `~${n.toLocaleString(locale)}`
+  return n.toLocaleString(locale)
+}
+
+import type { FamousPerson } from './types'
+
+export function getLocalizedFamous(person: FamousPerson, lang: Lang): { name: string; achievement: string } {
+  switch (lang) {
+    case 'en': return { name: person.nameEn, achievement: person.achievementEn ?? person.achievement }
+    case 'ja': return { name: person.nameJa ?? person.nameEn, achievement: person.achievementJa ?? person.achievement }
+    case 'zh': return { name: person.nameZh ?? person.nameEn, achievement: person.achievementZh ?? person.achievement }
+    case 'hi': return { name: person.nameHi ?? person.nameEn, achievement: person.achievementHi ?? person.achievement }
+    default: return { name: person.name, achievement: person.achievement }
+  }
 }
