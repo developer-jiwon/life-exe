@@ -235,6 +235,7 @@ function renderFrame(ctx: CanvasRenderingContext2D, w: number, h: number, text: 
     const pillPadX = Math.round(pillFs * 1.3)
     const pillPadY = Math.round(pillFs * 0.6)
     const pillGap = Math.round(pillFs * 0.8)
+    const pillH = pillFs + pillPadY * 2
     const pillY = Math.round(h * 0.28) - pillH * 2 - Math.round(pillFs * 1.5)
 
     ctx.save()
@@ -246,7 +247,6 @@ function renderFrame(ctx: CanvasRenderingContext2D, w: number, h: number, text: 
     const p1W = ctx.measureText(p1Text).width + pillPadX * 2
     const p2Text = 'so.now-then.dev/eow'
     const p2W = ctx.measureText(p2Text).width + pillPadX * 2
-    const pillH = pillFs + pillPadY * 2
     const r = pillH / 2
 
     // Helper: draw pill
