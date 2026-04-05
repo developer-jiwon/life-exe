@@ -113,9 +113,9 @@ export default function EOWApp() {
     ctx.fillStyle = '#0A0A0A'
     ctx.fillRect(0, 0, w, h)
 
-    // Card dimensions — small enough to fit any crop
-    const cardW = Math.round(w * 0.7)
-    const cardH = Math.round(cardW * 0.5)
+    // Card dimensions — fill width, height based on ratio
+    const cardW = Math.round(w * 0.88)
+    const cardH = ratio === '9:16' ? Math.round(h * 0.35) : Math.round(h * 0.55)
     const cardX = (w - cardW) / 2
     const cardY = (h - cardH) / 2
     const pad = Math.round(cardW * 0.08)
