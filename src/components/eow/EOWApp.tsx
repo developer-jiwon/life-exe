@@ -116,32 +116,57 @@ export default function EOWApp() {
     ctx.fillStyle = '#0A0A0A'
     ctx.fillRect(0, 0, w, h)
 
-    // Ticket card — fills most of canvas with safe margins
-    const margin = Math.round(w * 0.06)
-    const cardX = margin
-    const cardY = Math.round(h * 0.1)
-    const cardW = w - margin * 2
-    const cardH = Math.round(h * 0.8)
-    const pad = Math.round(cardW * 0.08)
-    const labelFs = Math.round(cardW * 0.03)
-    const quoteFs = Math.round(cardW * 0.075)
-    const footerFs = Math.round(cardW * 0.025)
+    // Card sizing
+    const cardW = w - Math.round(w * 0.12)
+    const cardX = (w - cardW) / 2
+    const pad = Math.round(cardW * 0.07)
+    const labelFs = Math.round(cardW * 0.028)
+    const footerFs = Math.round(cardW * 0.024)
+
+    // Measure text first to calc card height
+    const maxQuoteFs = Math.round(cardW * 0.07)
+    const maxTextW = cardW - pad * 2
+
+    // Try font size, shrink if too many lines
+    let quoteFs = maxQuoteFs
+    let lines: string[] = []
+    for (const tryFs of [maxQuoteFs, Math.round(maxQuoteFs * 0.8), Math.round(maxQuoteFs * 0.65)]) {
+      quoteFs = tryFs
+      ctx.font = `500 ${quoteFs}px "Noto Serif KR", Georgia, serif`
+      lines = []; let ln = ''
+      for (const ch of playingText.split('')) {
+        const test = ln + ch
+        if (ctx.measureText(test).width > maxTextW && ln) { lines.push(ln); ln = ch } else ln = test
+      }
+      if (ln) lines.push(ln)
+      if (lines.length <= 6) break
+    }
+
+    const lineH = quoteFs * 1.5
+    const textBlockH = lines.length * lineH
+
+    // Card height = content-based, min 50% of canvas
+    const headerH = pad * 2 + labelFs
+    const footerH = pad * 3 + footerFs
+    const contentCardH = headerH + textBlockH + footerH
+    const cardH = Math.max(contentCardH, Math.round(h * 0.5))
+    const cardY = (h - cardH) / 2
 
     // Ticket background
     ctx.fillStyle = '#F5F5F0'
     ctx.fillRect(cardX, cardY, cardW, cardH)
 
     // Wavy top edge
-    const waveH = Math.round(cardW * 0.015)
-    const waveW = Math.round(cardW / 15)
+    const waveH = Math.round(cardW * 0.012)
+    const waveW = Math.round(cardW / 16)
     ctx.fillStyle = '#0A0A0A'
     ctx.beginPath()
     ctx.moveTo(cardX, cardY)
     for (let x = cardX; x < cardX + cardW; x += waveW) {
-      ctx.quadraticCurveTo(x + waveW / 2, cardY + waveH, x + waveW, cardY)
+      ctx.quadraticCurveTo(x + waveW / 2, cardY + waveH, Math.min(x + waveW, cardX + cardW), cardY)
     }
-    ctx.lineTo(cardX + cardW, cardY - waveH)
-    ctx.lineTo(cardX, cardY - waveH)
+    ctx.lineTo(cardX + cardW, cardY - waveH * 2)
+    ctx.lineTo(cardX, cardY - waveH * 2)
     ctx.closePath()
     ctx.fill()
 
@@ -149,10 +174,10 @@ export default function EOWApp() {
     ctx.beginPath()
     ctx.moveTo(cardX, cardY + cardH)
     for (let x = cardX; x < cardX + cardW; x += waveW) {
-      ctx.quadraticCurveTo(x + waveW / 2, cardY + cardH - waveH, x + waveW, cardY + cardH)
+      ctx.quadraticCurveTo(x + waveW / 2, cardY + cardH - waveH, Math.min(x + waveW, cardX + cardW), cardY + cardH)
     }
-    ctx.lineTo(cardX + cardW, cardY + cardH + waveH)
-    ctx.lineTo(cardX, cardY + cardH + waveH)
+    ctx.lineTo(cardX + cardW, cardY + cardH + waveH * 2)
+    ctx.lineTo(cardX, cardY + cardH + waveH * 2)
     ctx.closePath()
     ctx.fill()
 
@@ -160,31 +185,23 @@ export default function EOWApp() {
     ctx.fillStyle = '#999'
     ctx.font = `400 ${labelFs}px "Plus Jakarta Sans", sans-serif`
     ctx.textAlign = 'center'
-    ctx.fillText('END OF WHAT', w / 2, cardY + Math.round(cardH * 0.12))
+    ctx.fillText('END OF WHAT', w / 2, cardY + pad + labelFs)
 
-    // Quote text — centered in card
-    ctx.font = `500 ${quoteFs}px "Noto Serif KR", Georgia, serif`
-    const maxTextW = cardW - pad * 2
-    const chars = playingText.split('')
-    let lines: string[] = []; let line = ''
-    for (const ch of chars) {
-      const test = line + ch
-      if (ctx.measureText(test).width > maxTextW && line) { lines.push(line); line = ch } else line = test
-    }
-    if (line) lines.push(line)
-
-    const lineH = quoteFs * 1.5
-    const totalTextH = lines.length * lineH
-    const textY = cardY + (cardH - totalTextH) / 2
+    // Quote text — vertically centered in remaining space
+    const textAreaTop = cardY + headerH
+    const textAreaBottom = cardY + cardH - footerH
+    const textAreaH = textAreaBottom - textAreaTop
+    const textY = textAreaTop + (textAreaH - textBlockH) / 2
 
     ctx.fillStyle = '#0A0A0A'
+    ctx.font = `500 ${quoteFs}px "Noto Serif KR", Georgia, serif`
     ctx.textAlign = 'center'
     for (let i = 0; i < lines.length; i++) {
       ctx.fillText(lines[i], w / 2, textY + quoteFs * 0.9 + i * lineH)
     }
 
     // Dashed line
-    const dashY = cardY + Math.round(cardH * 0.82)
+    const dashY = cardY + cardH - footerH + pad * 0.5
     ctx.strokeStyle = '#D0D0C8'
     ctx.lineWidth = 2
     ctx.setLineDash([8, 5])
@@ -194,8 +211,8 @@ export default function EOWApp() {
     ctx.stroke()
     ctx.setLineDash([])
 
-    // Footer — URL + @handle
-    const footerY = cardY + Math.round(cardH * 0.9)
+    // Footer
+    const footerY = dashY + pad * 0.8 + footerFs
     ctx.font = `400 ${footerFs}px "Plus Jakarta Sans", sans-serif`
     ctx.textAlign = 'left'
     ctx.fillStyle = '#888'
