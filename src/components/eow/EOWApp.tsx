@@ -178,7 +178,7 @@ export default function EOWApp() {
               {sharing ? 'Almost ready...' : 'Share to Reels'}
             </button>
             <div className="flex gap-3 w-full">
-              <button onClick={() => play()} className="flex-1 py-2.5 rounded-full text-[10px] tracking-widest uppercase border border-[#F5F5F0]/20 text-[#F5F5F0]/40 hover:border-[#F5F5F0]/60 hover:text-[#F5F5F0] transition-all" style={fontJ}>Replay</button>
+              <button onClick={() => play(playingText)} className="flex-1 py-2.5 rounded-full text-[10px] tracking-widest uppercase border border-[#F5F5F0]/20 text-[#F5F5F0]/40 hover:border-[#F5F5F0]/60 hover:text-[#F5F5F0] transition-all" style={fontJ}>Replay</button>
               <button onClick={resetToIdle} className="flex-1 py-2.5 rounded-full text-[10px] tracking-widest uppercase border border-[#F5F5F0]/20 text-[#F5F5F0]/40 hover:border-[#F5F5F0]/60 hover:text-[#F5F5F0] transition-all" style={fontJ}>New</button>
               <button onClick={() => setPhase('share')} className="flex-1 py-2.5 rounded-full text-[10px] tracking-widest uppercase border border-[#F5F5F0]/20 text-[#F5F5F0]/40 hover:border-[#F5F5F0]/60 hover:text-[#F5F5F0] transition-all" style={fontJ}>Link</button>
             </div>
