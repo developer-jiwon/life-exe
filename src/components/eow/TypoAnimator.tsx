@@ -204,14 +204,19 @@ function renderFrame(ctx: CanvasRenderingContext2D, w: number, h: number, text: 
   if (t > 0.5) {
     // Title watermark — subtle, top center
     const titleFade = Math.min(1, (t - 0.5) * 0.4)
-    const titleFs = isReels ? Math.round(w * 0.022) : Math.round(Math.min(w, h) * 0.024)
+    const titleFs = isReels ? Math.round(w * 0.02) : Math.round(Math.min(w, h) * 0.02)
+    const subFs = Math.round(titleFs * 0.65)
     ctx.save()
-    ctx.globalAlpha = titleFade * 0.25
-    ctx.fillStyle = '#F5F5F0'
     ctx.textAlign = 'center'
-    ctx.font = getSansFont(400, titleFs)
-    ctx.letterSpacing = '0.15em'
-    ctx.fillText('End Of What', w / 2, Math.round(h * 0.05))
+    ctx.fillStyle = '#F5F5F0'
+    // End Of What
+    ctx.globalAlpha = titleFade * 0.25
+    ctx.font = getSansFont(500, titleFs)
+    ctx.fillText('End Of What', w / 2, Math.round(h * 0.045))
+    // 오늘의 한 줄을 남겨보세요
+    ctx.globalAlpha = titleFade * 0.18
+    ctx.font = getSansFont(400, subFs)
+    ctx.fillText('오늘의 한 줄을 남겨보세요', w / 2, Math.round(h * 0.045) + titleFs * 1.4)
     ctx.restore()
     ctx.textAlign = 'start'; ctx.globalAlpha = 1
   }
