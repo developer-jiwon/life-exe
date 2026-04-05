@@ -225,17 +225,17 @@ function renderFrame(ctx: CanvasRenderingContext2D, w: number, h: number, text: 
   }
 
   if (t > 1.0) {
-    const fs = isReels ? Math.round(w * 0.019) : Math.round(Math.min(w, h) * 0.02)
-    const padX = Math.round(fs * 1.0)
-    const padY = Math.round(fs * 0.7)
-    const notch = Math.round(fs * 0.45)
+    const fs = isReels ? Math.round(w * 0.024) : Math.round(Math.min(w, h) * 0.026)
+    const padX = Math.round(fs * 1.2)
+    const padY = Math.round(fs * 0.9)
+    const notch = Math.round(fs * 0.5)
 
     // ─── Bookmark 1: @jiwonnnnieee ───
     const fadeIn1 = Math.min(1, (t - 1.0) * 1.2)
     const slide1 = easeOutCubic(Math.min(1, (t - 1.0) * 1.0))
 
     ctx.save()
-    ctx.font = getSansFont(500, fs)
+    ctx.font = getSansFont(600, fs)
     const t1 = '@jiwonnnnieee'
     const t1W = ctx.measureText(t1).width
     const b1W = t1W + padX * 2
@@ -244,7 +244,20 @@ function renderFrame(ctx: CanvasRenderingContext2D, w: number, h: number, text: 
     const b1FullH = b1H + notch
     const b1Y = slide1 * b1FullH - b1FullH
 
-    ctx.globalAlpha = fadeIn1 * 0.7
+    // Shadow
+    ctx.globalAlpha = fadeIn1 * 0.3
+    ctx.fillStyle = '#000'
+    ctx.beginPath()
+    ctx.moveTo(b1X + 2, 0)
+    ctx.lineTo(b1X + b1W + 2, 0)
+    ctx.lineTo(b1X + b1W + 2, b1Y + b1H + 2)
+    ctx.lineTo(b1X + b1W / 2 + 2, b1Y + b1H + notch + 2)
+    ctx.lineTo(b1X + 2, b1Y + b1H + 2)
+    ctx.closePath()
+    ctx.fill()
+
+    // Ribbon
+    ctx.globalAlpha = fadeIn1 * 0.9
     ctx.fillStyle = '#F5F5F0'
     ctx.beginPath()
     ctx.moveTo(b1X, 0)
@@ -255,10 +268,11 @@ function renderFrame(ctx: CanvasRenderingContext2D, w: number, h: number, text: 
     ctx.closePath()
     ctx.fill()
 
-    ctx.globalAlpha = fadeIn1 * 0.9
+    // Text
+    ctx.globalAlpha = fadeIn1 * 0.95
     ctx.fillStyle = '#0A0A0A'
     ctx.textAlign = 'center'
-    ctx.font = getSansFont(500, fs)
+    ctx.font = getSansFont(600, fs)
     ctx.fillText(t1, b1X + b1W / 2, b1Y + padY + fs * 0.88)
     ctx.restore()
 
@@ -267,7 +281,7 @@ function renderFrame(ctx: CanvasRenderingContext2D, w: number, h: number, text: 
     const slide2 = easeOutCubic(Math.min(1, Math.max(0, t - 1.4) * 0.8))
 
     ctx.save()
-    ctx.font = getSansFont(400, fs)
+    ctx.font = getSansFont(500, fs)
     const t2 = 'so.now-then.dev/eow'
     const t2W = ctx.measureText(t2).width
     const b2W = t2W + padX * 2
@@ -276,7 +290,20 @@ function renderFrame(ctx: CanvasRenderingContext2D, w: number, h: number, text: 
     const b2FullH = b2H + notch
     const b2Y = slide2 * b2FullH - b2FullH
 
-    ctx.globalAlpha = fadeIn2 * 0.5
+    // Shadow
+    ctx.globalAlpha = fadeIn2 * 0.25
+    ctx.fillStyle = '#000'
+    ctx.beginPath()
+    ctx.moveTo(b2X + 2, 0)
+    ctx.lineTo(b2X + b2W + 2, 0)
+    ctx.lineTo(b2X + b2W + 2, b2Y + b2H + 2)
+    ctx.lineTo(b2X + b2W / 2 + 2, b2Y + b2H + notch + 2)
+    ctx.lineTo(b2X + 2, b2Y + b2H + 2)
+    ctx.closePath()
+    ctx.fill()
+
+    // Ribbon
+    ctx.globalAlpha = fadeIn2 * 0.75
     ctx.fillStyle = '#F5F5F0'
     ctx.beginPath()
     ctx.moveTo(b2X, 0)
@@ -287,7 +314,8 @@ function renderFrame(ctx: CanvasRenderingContext2D, w: number, h: number, text: 
     ctx.closePath()
     ctx.fill()
 
-    ctx.globalAlpha = fadeIn2 * 0.7
+    // Text
+    ctx.globalAlpha = fadeIn2 * 0.85
     ctx.fillStyle = '#0A0A0A'
     ctx.textAlign = 'center'
     ctx.font = getSansFont(400, fs)
