@@ -378,6 +378,8 @@ export default function TypoAnimator({ text, style, onComplete, isPlaying }: Typ
       recorder.onstop = () => {
         const blob = new Blob(chunksRef.current, { type: mimeType })
         blobRef.current = blob
+        // Notify parent that blob is ready
+        onCompleteRef.current?.(blob)
       }
       recorder.start()
       recorderRef.current = recorder
@@ -418,10 +420,16 @@ export default function TypoAnimator({ text, style, onComplete, isPlaying }: Typ
 
       if (done && !doneRef.current) {
         doneRef.current = true
+        // Hold final frame for 3s on recording, then stop recorder
+        // onComplete is called from recorder.onstop to ensure blob is ready
         setTimeout(() => {
           recStopped = true
-          if (recorder && recorder.state !== 'inactive') recorder.stop()
-          setTimeout(() => onCompleteRef.current?.(blobRef.current), 100)
+          if (recorder && recorder.state !== 'inactive') {
+            recorder.stop()
+          } else {
+            // No recorder (unsupported) — still notify done
+            onCompleteRef.current?.(null)
+          }
         }, 3000)
       }
 

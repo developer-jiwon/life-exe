@@ -54,7 +54,17 @@ export default function EOWApp() {
 
   const shareToReels = useCallback(() => {
     const blob = reelsBlobRef.current
-    if (!blob) return
+    if (!blob) {
+      // Fallback: blob이 없으면 (녹화 미지원) 텍스트 공유
+      if (navigator.share) {
+        navigator.share({
+          title: 'End Of What',
+          text: `"${playingText}"\n\n@jiwonnnnieee\nso.now-then.dev/eow`,
+          url: `${window.location.origin}/eow?t=${encodeURIComponent(playingText)}`,
+        }).catch(() => {})
+      }
+      return
+    }
 
     const ext = blob.type.includes('mp4') ? 'mp4' : 'webm'
     const file = new File([blob], `eow.${ext}`, { type: blob.type })
