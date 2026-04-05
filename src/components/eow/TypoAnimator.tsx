@@ -220,7 +220,7 @@ function renderFrame(ctx: CanvasRenderingContext2D, w: number, h: number, text: 
     ctx.letterSpacing = `${titleFs * 0.3}px`
     ctx.fillText('E N D  O F  W H A T', w / 2, titleY)
     // 오늘의 한 줄을 남겨보세요
-    ctx.globalAlpha = titleFade * 0.6
+    ctx.globalAlpha = titleFade * 0.85
     ctx.font = getSansFont(400, subFs)
     ctx.letterSpacing = '0px'
     ctx.fillText('오늘의 한 줄을 남겨보세요', w / 2, titleY + titleFs * 1.3)
