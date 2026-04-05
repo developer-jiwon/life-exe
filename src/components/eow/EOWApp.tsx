@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 import TypoAnimator from './TypoAnimator'
 import TicketNotice from './TicketNotice'
 import SentenceWall from './SentenceWall'
@@ -9,10 +9,11 @@ import { saveSentence } from '@/lib/eow-storage'
 
 export default function EOWApp() {
   const [text, setText] = useState('')
-  const [phase, setPhase] = useState<'notice' | 'idle' | 'playing' | 'done' | 'reels' | 'share'>('notice')
+  const [phase, setPhase] = useState<'notice' | 'idle' | 'playing' | 'done' | 'share'>('notice')
   const [playingText, setPlayingText] = useState('')
   const [copied, setCopied] = useState(false)
   const [playKey, setPlayKey] = useState(0)
+  const reelsBlobRef = useRef<Blob | null>(null)
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search)
@@ -30,12 +31,12 @@ export default function EOWApp() {
     if (!val) return
     try {
       const AudioCtx = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext
-      const ctx = new AudioCtx()
-      ctx.resume().then(() => ctx.close())
+      const ctx = new AudioCtx(); ctx.resume().then(() => ctx.close())
     } catch { /* ignore */ }
     saveSentence(val)
     setPlayingText(val)
     setPlayKey(prev => prev + 1)
+    reelsBlobRef.current = null
     setPhase('playing')
   }, [text])
 
@@ -43,49 +44,39 @@ export default function EOWApp() {
     ? `${typeof window !== 'undefined' ? window.location.origin : ''}/eow?t=${encodeURIComponent(playingText)}`
     : ''
 
-  const startReels = useCallback(() => {
-    setPlayKey(prev => prev + 1)
-    setPhase('reels')
+  const handleComplete = useCallback((blob: Blob | null) => {
+    reelsBlobRef.current = blob
+    setPhase('done')
   }, [])
 
-  const handleReelsDone = useCallback((blob: Blob) => {
+  const shareToReels = useCallback(() => {
+    const blob = reelsBlobRef.current
+    if (!blob) return
+
     const ext = blob.type.includes('mp4') ? 'mp4' : 'webm'
     const file = new File([blob], `eow.${ext}`, { type: blob.type })
 
-    // Try native share (opens Instagram/TikTok share sheet)
     if (navigator.share && navigator.canShare?.({ files: [file] })) {
       navigator.share({
         files: [file],
         title: 'End Of What',
         text: `"${playingText}"\n\n@jiwonnnnieee\nso.now-then.dev/eow`,
-      }).then(() => {
-        setPhase('done')
-      }).catch(() => {
-        // User cancelled — go back to done
-        setPhase('done')
-      })
+      }).catch(() => {})
     } else {
-      // Desktop fallback — download
       const url = URL.createObjectURL(blob)
-      const a = document.createElement('a')
-      a.href = url
-      a.download = `eow.${ext}`
-      a.click()
+      const a = document.createElement('a'); a.href = url; a.download = `eow.${ext}`; a.click()
       setTimeout(() => URL.revokeObjectURL(url), 3000)
-      setPhase('done')
     }
   }, [playingText])
 
   const resetToIdle = useCallback(() => {
-    setPhase('idle')
-    setText('')
-    setPlayingText('')
+    setPhase('idle'); setText(''); setPlayingText(''); reelsBlobRef.current = null
     window.history.replaceState(null, '', '/eow')
   }, [])
 
   const fontJ = { fontFamily: 'var(--font-jakarta)' }
 
-  // ─── NOTICE ───
+  // ─── NOTICE (매번 표시) ───
   if (phase === 'notice') {
     return (
       <div className="fixed inset-0 bg-[#0A0A0A]">
@@ -132,28 +123,6 @@ export default function EOWApp() {
     )
   }
 
-  // ─── REELS RECORDING ───
-  if (phase === 'reels') {
-    return (
-      <div className="fixed inset-0">
-        <TypoAnimator
-          key={`reels-${playKey}`}
-          text={playingText}
-          style="typewriter"
-          isPlaying={true}
-          reelsMode={true}
-          onReelsDone={handleReelsDone}
-        />
-        <div className="fixed bottom-8 left-0 right-0 z-[60] flex justify-center animate-fade-in">
-          <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-black/60 backdrop-blur-sm">
-            <div className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
-            <span className="text-[10px] tracking-widest uppercase text-white/60" style={fontJ}>Recording for Reels...</span>
-          </div>
-        </div>
-      </div>
-    )
-  }
-
   // ─── PLAYING / DONE ───
   if (phase === 'playing' || phase === 'done') {
     return (
@@ -163,13 +132,19 @@ export default function EOWApp() {
           text={playingText}
           style="typewriter"
           isPlaying={phase === 'playing'}
-          onComplete={() => setPhase('done')}
+          onComplete={handleComplete}
         />
 
         {phase === 'done' && (
           <div className="fixed inset-0 z-[60] flex flex-col items-center justify-end pb-14 animate-fade-in">
             <div className="flex flex-col items-center gap-3 w-full max-w-[320px] px-4">
-              <button onClick={startReels} className="w-full py-3 rounded-full text-[10px] tracking-widest uppercase transition-all active:scale-[0.98] bg-[#F5F5F0] text-[#0A0A0A] font-medium" style={fontJ}>Share to Reels</button>
+              <button
+                onClick={shareToReels}
+                className="w-full py-3 rounded-full text-[10px] tracking-widest uppercase transition-all active:scale-[0.98] bg-[#F5F5F0] text-[#0A0A0A] font-medium"
+                style={fontJ}
+              >
+                Share to Reels
+              </button>
               <div className="flex gap-3 w-full">
                 <button onClick={() => play()} className="flex-1 py-2.5 rounded-full text-[10px] tracking-widest uppercase border border-[#F5F5F0]/30 text-[#F5F5F0]/60 hover:border-[#F5F5F0]/60 hover:text-[#F5F5F0] transition-all" style={fontJ}>Replay</button>
                 <button onClick={resetToIdle} className="flex-1 py-2.5 rounded-full text-[10px] tracking-widest uppercase border border-[#F5F5F0]/30 text-[#F5F5F0]/60 hover:border-[#F5F5F0]/60 hover:text-[#F5F5F0] transition-all" style={fontJ}>New</button>
@@ -187,7 +162,7 @@ export default function EOWApp() {
     <div className="min-h-screen bg-[#0A0A0A]">
       <div className="max-w-[720px] mx-auto px-5 py-4 flex items-center justify-between">
         <a href="/" className="text-[10px] text-[#444] tracking-wider uppercase hover:text-[#666] transition-colors" style={fontJ}>Life.exe</a>
-        <span className="text-[10px] tracking-wider px-3 py-1 rounded-full border border-[#333] text-[#666] hover:border-[#555] hover:text-[#999] transition-colors" style={fontJ}>@jiwonnnnieee</span>
+        <span className="text-[10px] tracking-wider px-3 py-1.5 rounded-full bg-[#F5F5F0] text-[#0A0A0A] font-medium" style={fontJ}>@jiwonnnnieee</span>
       </div>
 
       <div className="flex flex-col items-center justify-center px-6 pt-16 pb-20">
@@ -201,33 +176,19 @@ export default function EOWApp() {
             <textarea
               value={text}
               onChange={(e) => { setText(e.target.value.slice(0, 100)); playTypeClick() }}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter') {
-                  // Shift+Enter = 줄바꿈 허용, Enter만 = play
-                  if (!e.shiftKey) {
-                    e.preventDefault()
-                    play()
-                  }
-                }
-              }}
+              onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); play() } }}
               placeholder="여기에 쓰세요"
               maxLength={100}
               rows={3}
               autoFocus
-              className="w-full bg-transparent text-[#F5F5F0] text-center text-[22px] font-bold leading-relaxed placeholder:text-[#2A2A2A] border-none outline-none resize-none caret-[#555]"
-              style={{ fontFamily: 'var(--font-cormorant), var(--font-noto-serif), serif' }}
+              className="w-full bg-transparent text-[#F5F5F0] text-center text-[22px] font-bold leading-relaxed placeholder:text-[#2A2A2A] border-none outline-none resize-none caret-[#555] font-[var(--font-noto-serif)]"
+              style={{ fontFamily: '"Noto Serif KR", "Cormorant Garamond", Georgia, serif' }}
             />
             <div className="absolute -bottom-4 right-0 text-[9px] text-[#333]" style={fontJ}>{text.length}/100</div>
           </div>
 
           <div className="text-center">
-            <button
-              onClick={() => play()}
-              className="px-8 py-2.5 text-[11px] tracking-widest uppercase border border-[#F5F5F0] text-[#F5F5F0] rounded-full hover:bg-[#F5F5F0] hover:text-[#0A0A0A] active:scale-95 transition-all duration-300 select-none"
-              style={fontJ}
-            >
-              Play
-            </button>
+            <button onClick={() => play()} className="px-8 py-2.5 text-[11px] tracking-widest uppercase border border-[#F5F5F0] text-[#F5F5F0] rounded-full hover:bg-[#F5F5F0] hover:text-[#0A0A0A] active:scale-95 transition-all duration-300 select-none" style={fontJ}>Play</button>
             <p className="text-[9px] text-[#333] mt-3">Enter ↵ · Shift+Enter 줄바꿈</p>
           </div>
         </div>
@@ -236,7 +197,7 @@ export default function EOWApp() {
       <div className="max-w-[720px] mx-auto px-5"><div className="border-t border-[#1A1A1A]" /></div>
 
       <div className="text-center pt-10 pb-6">
-        <p className="text-[10px] tracking-[0.2em] uppercase text-[#444]" style={fontJ}>Others</p>
+        <p className="text-[10px] tracking-[0.15em] uppercase text-[#444]" style={fontJ}>Being added by the developer</p>
       </div>
 
       <SentenceWall onSentenceClick={(s) => play(s)} refreshKey={playKey} />
