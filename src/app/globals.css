@@ -33,3 +33,21 @@ button, input, select, textarea {
 .animate-fade-in {
   animation: fade-in 0.4s ease-out;
 }
+
+@keyframes sparkle-dot {
+  0%, 100% { opacity: 0; transform: scale(0); }
+  50% { opacity: 0.6; transform: scale(1); }
+}
+
+@keyframes tarot-glow {
+  0%, 100% { opacity: 0.5; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.02); }
+}
+
+@keyframes tarot-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
