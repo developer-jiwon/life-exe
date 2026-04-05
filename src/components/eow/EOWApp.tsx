@@ -109,88 +109,71 @@ export default function EOWApp() {
     const ctx = canvas.getContext('2d')
     if (!ctx) return
 
-    // Background
-    ctx.fillStyle = '#0A0A0A'
+    // Full canvas = the card (no black background)
+    ctx.fillStyle = '#F5F5F0'
     ctx.fillRect(0, 0, w, h)
 
-    // Card fills most of the canvas
-    const cardW = Math.round(w * 0.88)
-    const cardH = Math.round(h * 0.75)
-    const cardX = (w - cardW) / 2
-    const cardY = (h - cardH) / 2
-    const pad = Math.round(cardW * 0.08)
+    const pad = Math.round(w * 0.08)
 
-    // Card background
-    ctx.fillStyle = '#F5F5F0'
-    ctx.fillRect(cardX, cardY, cardW, cardH)
-
-    // Perforated top edge
-    const dotR = 4; const dotGap = Math.round(cardW / 20)
-    ctx.fillStyle = '#0A0A0A'
-    for (let x = cardX + dotGap; x < cardX + cardW - dotGap / 2; x += dotGap) {
-      ctx.beginPath(); ctx.arc(x, cardY, dotR, 0, Math.PI * 2); ctx.fill()
-    }
-    // Perforated bottom edge
-    for (let x = cardX + dotGap; x < cardX + cardW - dotGap / 2; x += dotGap) {
-      ctx.beginPath(); ctx.arc(x, cardY + cardH, dotR, 0, Math.PI * 2); ctx.fill()
-    }
-
-    // "END OF WHAT" label
-    const labelFs = Math.round(cardW * 0.025)
+    // "END OF WHAT" label — top area
+    const labelFs = Math.round(w * 0.028)
     ctx.fillStyle = '#999'
     ctx.font = `400 ${labelFs}px "Plus Jakarta Sans", sans-serif`
     ctx.textAlign = 'left'
     ctx.letterSpacing = `${labelFs * 0.25}px`
-    ctx.fillText('END OF WHAT', cardX + pad, cardY + pad + labelFs)
+    ctx.fillText('END OF WHAT', pad, Math.round(h * 0.12))
 
-    // Quote text
-    const quoteFs = Math.round(cardW * 0.055)
+    // Quote text — centered vertically, large
+    const quoteFs = Math.round(w * 0.07)
     ctx.fillStyle = '#0A0A0A'
     ctx.font = `500 ${quoteFs}px "Noto Serif KR", Georgia, serif`
     ctx.letterSpacing = '0px'
 
     // Wrap text
-    const maxTextW = cardW - pad * 2
-    const words = playingText.split('')
+    const maxTextW = w - pad * 2
+    const chars = playingText.split('')
     let lines: string[] = []; let line = ''
-    for (const ch of words) {
+    for (const ch of chars) {
       const test = line + ch
       if (ctx.measureText(test).width > maxTextW && line) { lines.push(line); line = ch } else line = test
     }
     if (line) lines.push(line)
 
-    const lineH = quoteFs * 1.6
-    const textStartY = cardY + pad + labelFs + Math.round(pad * 1.2)
-    ctx.fillText('\u201C', cardX + pad - Math.round(quoteFs * 0.3), textStartY + quoteFs)
-    for (let i = 0; i < lines.length; i++) {
-      ctx.fillText(lines[i], cardX + pad, textStartY + quoteFs + i * lineH)
-    }
-    const lastLineY = textStartY + quoteFs + (lines.length - 1) * lineH
-    const lastLineW = ctx.measureText(lines[lines.length - 1] || '').width
-    ctx.fillText('\u201D', cardX + pad + lastLineW + 4, lastLineY)
+    const lineH = quoteFs * 1.5
+    const totalTextH = lines.length * lineH
+    const textStartY = (h - totalTextH) / 2
 
-    // Dashed line
-    const dashY = cardY + cardH - Math.round(pad * 1.8)
+    // Opening quote
+    ctx.fillText('\u201C', pad - Math.round(quoteFs * 0.15), textStartY + quoteFs * 0.9)
+    for (let i = 0; i < lines.length; i++) {
+      ctx.fillText(lines[i], pad, textStartY + quoteFs * 0.9 + i * lineH)
+    }
+    // Closing quote
+    const lastLineW = ctx.measureText(lines[lines.length - 1] || '').width
+    ctx.fillText('\u201D', pad + lastLineW + Math.round(quoteFs * 0.15), textStartY + quoteFs * 0.9 + (lines.length - 1) * lineH)
+
+    // Dashed line — near bottom
+    const dashY = Math.round(h * 0.85)
     ctx.strokeStyle = '#D0D0C8'
-    ctx.lineWidth = 1
-    ctx.setLineDash([6, 4])
+    ctx.lineWidth = 2
+    ctx.setLineDash([8, 5])
     ctx.beginPath()
-    ctx.moveTo(cardX + pad * 0.6, dashY)
-    ctx.lineTo(cardX + cardW - pad * 0.6, dashY)
+    ctx.moveTo(pad, dashY)
+    ctx.lineTo(w - pad, dashY)
     ctx.stroke()
     ctx.setLineDash([])
 
     // Footer: URL + @handle
-    const footerFs = Math.round(cardW * 0.022)
-    const footerY = cardY + cardH - Math.round(pad * 0.8)
+    const footerFs = Math.round(w * 0.026)
+    const footerY = Math.round(h * 0.92)
     ctx.font = `400 ${footerFs}px "Plus Jakarta Sans", sans-serif`
     ctx.textAlign = 'left'
     ctx.fillStyle = '#888'
-    ctx.fillText('so.now-then.dev/eow', cardX + pad, footerY)
+    ctx.fillText('so.now-then.dev/eow', pad, footerY)
     ctx.textAlign = 'right'
     ctx.fillStyle = '#0A0A0A'
     ctx.font = `500 ${footerFs}px "Plus Jakarta Sans", sans-serif`
-    ctx.fillText('@jiwonnnnieee', cardX + cardW - pad, footerY)
+    ctx.fillText('@jiwonnnnieee', w - pad, footerY)
 
     // Export
     canvas.toBlob((blob) => {
@@ -306,6 +289,7 @@ export default function EOWApp() {
             <div className="flex gap-3 w-full">
               <button onClick={() => play(playingText)} className="flex-1 py-2.5 rounded-full text-[10px] tracking-widest uppercase border border-[#F5F5F0]/30 text-[#F5F5F0]/50 hover:border-[#F5F5F0]/60 hover:text-[#F5F5F0] transition-all" style={fontJ}>Replay</button>
               <button onClick={resetToIdle} className="flex-1 py-2.5 rounded-full text-[10px] tracking-widest uppercase border border-[#F5F5F0]/30 text-[#F5F5F0]/50 hover:border-[#F5F5F0]/60 hover:text-[#F5F5F0] transition-all" style={fontJ}>New</button>
+              <button onClick={() => setPhase('share')} className="flex-1 py-2.5 rounded-full text-[10px] tracking-widest uppercase border border-[#F5F5F0]/30 text-[#F5F5F0]/50 hover:border-[#F5F5F0]/60 hover:text-[#F5F5F0] transition-all" style={fontJ}>Link</button>
             </div>
           </div>
         </div>
