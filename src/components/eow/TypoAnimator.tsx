@@ -63,7 +63,7 @@ function drawVignette(ctx: CanvasRenderingContext2D, w: number, h: number, stren
 function splitWords(text: string): string[] { return text.match(/\S+/g) || [text] }
 
 function calcFontSize(len: number, w: number, h: number): number {
-  const base = Math.min(w * 0.09, h * 0.08, 76)
+  const base = Math.min(w * 0.09, h * 0.08)
   if (len <= 8) return base * 1.5
   if (len <= 15) return base * 1.15
   if (len <= 30) return base * 0.85
