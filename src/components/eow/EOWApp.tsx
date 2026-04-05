@@ -164,6 +164,9 @@ export default function EOWApp() {
           onComplete={handleComplete}
         />
 
+        {/* 책갈피 위 투명 링크 */}
+        <a href="https://www.threads.com/@jiwonnnnieee" target="_blank" rel="noopener noreferrer" className="fixed z-[60] top-0 left-[5%] w-[40%] h-[8%] cursor-pointer" />
+
         <div className="fixed inset-0 z-[60] flex flex-col items-center justify-end pb-14 pointer-events-none">
           <div className="flex flex-col items-center gap-3 w-full max-w-[320px] px-4 pointer-events-auto">
             <button
