@@ -150,15 +150,13 @@ export default function EOWApp() {
 
         <div className="fixed inset-0 z-[60] flex flex-col items-center justify-end pb-14 pointer-events-none">
           <div className="flex flex-col items-center gap-3 w-full max-w-[320px] px-4 pointer-events-auto">
-            {phase === 'done' && (
-              <button
-                onClick={shareToReels}
-                className="w-full py-3 rounded-full text-[10px] tracking-widest uppercase transition-all active:scale-[0.98] font-medium bg-[#F5F5F0] text-[#0A0A0A] animate-fade-in"
-                style={fontJ}
-              >
-                Share to Reels
-              </button>
-            )}
+            <button
+              onClick={shareToReels}
+              className="w-full py-3 rounded-full text-[10px] tracking-widest uppercase transition-all active:scale-[0.98] font-medium bg-[#F5F5F0]/20 text-[#F5F5F0]/40 hover:bg-[#F5F5F0] hover:text-[#0A0A0A]"
+              style={fontJ}
+            >
+              Share to Reels
+            </button>
             <div className="flex gap-3 w-full">
               <button onClick={() => play()} className="flex-1 py-2.5 rounded-full text-[10px] tracking-widest uppercase border border-[#F5F5F0]/20 text-[#F5F5F0]/40 hover:border-[#F5F5F0]/60 hover:text-[#F5F5F0] transition-all" style={fontJ}>Replay</button>
               <button onClick={resetToIdle} className="flex-1 py-2.5 rounded-full text-[10px] tracking-widest uppercase border border-[#F5F5F0]/20 text-[#F5F5F0]/40 hover:border-[#F5F5F0]/60 hover:text-[#F5F5F0] transition-all" style={fontJ}>New</button>
