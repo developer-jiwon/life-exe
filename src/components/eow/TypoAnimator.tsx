@@ -33,16 +33,20 @@ function getSansFont(weight: number, size: number) {
 interface Dust { x: number; y: number; s: number; o: number; sp: number; d: number }
 
 function createDust(w: number, h: number, n: number): Dust[] {
+  const scale = Math.min(w, h) / 400 // scale relative to ~phone size
   return Array.from({ length: n }, () => ({
     x: Math.random() * w, y: Math.random() * h,
-    s: 0.3 + Math.random() * 1.2, o: 0.05 + Math.random() * 0.15,
-    sp: 0.05 + Math.random() * 0.2, d: (Math.random() - 0.5) * 0.15,
+    s: (0.3 + Math.random() * 1.2) * scale,
+    o: 0.05 + Math.random() * 0.15,
+    sp: (0.05 + Math.random() * 0.2) * scale,
+    d: (Math.random() - 0.5) * 0.15 * scale,
   }))
 }
 
 function tickDust(dust: Dust[], w: number, h: number) {
+  const scale = Math.min(w, h) / 400
   for (const p of dust) {
-    p.y -= p.sp; p.x += p.d + Math.sin(p.y * 0.008) * 0.15
+    p.y -= p.sp; p.x += p.d + Math.sin(p.y * 0.008) * 0.15 * scale
     if (p.y < -5) { p.y = h + 5; p.x = Math.random() * w }
   }
 }
