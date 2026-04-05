@@ -101,26 +101,110 @@ export default function EOWApp() {
 
   const ticketRef = useRef<HTMLDivElement>(null)
 
-  const shareCard = useCallback(async () => {
-    if (!ticketRef.current) return
-    try {
-      const canvas = await html2canvas(ticketRef.current, {
-        backgroundColor: '#0A0A0A',
-        scale: 3,
-      })
-      canvas.toBlob((blob) => {
-        if (!blob) return
-        const file = new File([blob], 'eow-card.png', { type: 'image/png' })
-        if (navigator.share && navigator.canShare?.({ files: [file] })) {
-          navigator.share({ files: [file], title: 'End Of What' }).catch(() => {})
-        } else {
-          const url = URL.createObjectURL(blob)
-          const a = document.createElement('a'); a.href = url; a.download = 'eow-card.png'; a.click()
-          setTimeout(() => URL.revokeObjectURL(url), 3000)
-        }
-      }, 'image/png')
-    } catch {}
-  }, [])
+  const shareCard = useCallback(async (ratio: '9:16' | '1:1') => {
+    const w = ratio === '9:16' ? 1080 : 1080
+    const h = ratio === '9:16' ? 1920 : 1080
+    const canvas = document.createElement('canvas')
+    canvas.width = w; canvas.height = h
+    const ctx = canvas.getContext('2d')
+    if (!ctx) return
+
+    // Background
+    ctx.fillStyle = '#0A0A0A'
+    ctx.fillRect(0, 0, w, h)
+
+    // Card dimensions
+    const cardW = Math.round(w * 0.85)
+    const cardH = Math.round(cardW * 0.55)
+    const cardX = (w - cardW) / 2
+    const cardY = (h - cardH) / 2
+    const pad = Math.round(cardW * 0.08)
+
+    // Card background
+    ctx.fillStyle = '#F5F5F0'
+    ctx.fillRect(cardX, cardY, cardW, cardH)
+
+    // Perforated top edge
+    const dotR = 4; const dotGap = Math.round(cardW / 20)
+    ctx.fillStyle = '#0A0A0A'
+    for (let x = cardX + dotGap; x < cardX + cardW - dotGap / 2; x += dotGap) {
+      ctx.beginPath(); ctx.arc(x, cardY, dotR, 0, Math.PI * 2); ctx.fill()
+    }
+    // Perforated bottom edge
+    for (let x = cardX + dotGap; x < cardX + cardW - dotGap / 2; x += dotGap) {
+      ctx.beginPath(); ctx.arc(x, cardY + cardH, dotR, 0, Math.PI * 2); ctx.fill()
+    }
+
+    // "END OF WHAT" label
+    const labelFs = Math.round(cardW * 0.025)
+    ctx.fillStyle = '#999'
+    ctx.font = `400 ${labelFs}px "Plus Jakarta Sans", sans-serif`
+    ctx.textAlign = 'left'
+    ctx.letterSpacing = `${labelFs * 0.25}px`
+    ctx.fillText('END OF WHAT', cardX + pad, cardY + pad + labelFs)
+
+    // Quote text
+    const quoteFs = Math.round(cardW * 0.055)
+    ctx.fillStyle = '#0A0A0A'
+    ctx.font = `500 ${quoteFs}px "Noto Serif KR", Georgia, serif`
+    ctx.letterSpacing = '0px'
+
+    // Wrap text
+    const maxTextW = cardW - pad * 2
+    const words = playingText.split('')
+    let lines: string[] = []; let line = ''
+    for (const ch of words) {
+      const test = line + ch
+      if (ctx.measureText(test).width > maxTextW && line) { lines.push(line); line = ch } else line = test
+    }
+    if (line) lines.push(line)
+
+    const lineH = quoteFs * 1.6
+    const textStartY = cardY + pad + labelFs + Math.round(pad * 1.2)
+    ctx.fillText('\u201C', cardX + pad - Math.round(quoteFs * 0.3), textStartY + quoteFs)
+    for (let i = 0; i < lines.length; i++) {
+      ctx.fillText(lines[i], cardX + pad, textStartY + quoteFs + i * lineH)
+    }
+    const lastLineY = textStartY + quoteFs + (lines.length - 1) * lineH
+    const lastLineW = ctx.measureText(lines[lines.length - 1] || '').width
+    ctx.fillText('\u201D', cardX + pad + lastLineW + 4, lastLineY)
+
+    // Dashed line
+    const dashY = cardY + cardH - Math.round(pad * 1.8)
+    ctx.strokeStyle = '#D0D0C8'
+    ctx.lineWidth = 1
+    ctx.setLineDash([6, 4])
+    ctx.beginPath()
+    ctx.moveTo(cardX + pad * 0.6, dashY)
+    ctx.lineTo(cardX + cardW - pad * 0.6, dashY)
+    ctx.stroke()
+    ctx.setLineDash([])
+
+    // Footer: URL + @handle
+    const footerFs = Math.round(cardW * 0.022)
+    const footerY = cardY + cardH - Math.round(pad * 0.8)
+    ctx.font = `400 ${footerFs}px "Plus Jakarta Sans", sans-serif`
+    ctx.textAlign = 'left'
+    ctx.fillStyle = '#888'
+    ctx.fillText('so.now-then.dev/eow', cardX + pad, footerY)
+    ctx.textAlign = 'right'
+    ctx.fillStyle = '#0A0A0A'
+    ctx.font = `500 ${footerFs}px "Plus Jakarta Sans", sans-serif`
+    ctx.fillText('@jiwonnnnieee', cardX + cardW - pad, footerY)
+
+    // Export
+    canvas.toBlob((blob) => {
+      if (!blob) return
+      const file = new File([blob], `eow-card.png`, { type: 'image/png' })
+      if (navigator.share && navigator.canShare?.({ files: [file] })) {
+        navigator.share({ files: [file], title: 'End Of What' }).catch(() => {})
+      } else {
+        const url = URL.createObjectURL(blob)
+        const a = document.createElement('a'); a.href = url; a.download = 'eow-card.png'; a.click()
+        setTimeout(() => URL.revokeObjectURL(url), 3000)
+      }
+    }, 'image/png')
+  }, [playingText])
 
   const resetToIdle = useCallback(() => {
     setPhase('idle'); setText(''); setPlayingText(''); reelsBlobRef.current = null
@@ -163,8 +247,8 @@ export default function EOWApp() {
           </div>
           <div className="mt-10 flex flex-col gap-3">
             <div className="flex gap-3 w-full">
-              <button onClick={shareCard} className="flex-1 py-3.5 rounded-full text-[10px] tracking-widest uppercase transition-all active:scale-[0.98] bg-[#F5F5F0] text-[#0A0A0A] font-medium" style={fontJ}>Card to Reels</button>
-              <button onClick={shareCard} className="flex-1 py-3.5 rounded-full text-[10px] tracking-widest uppercase transition-all active:scale-[0.98] border border-[#F5F5F0]/30 text-[#F5F5F0]/60 hover:text-[#F5F5F0]" style={fontJ}>Card to Post</button>
+              <button onClick={() => shareCard('9:16')} className="flex-1 py-3.5 rounded-full text-[10px] tracking-widest uppercase transition-all active:scale-[0.98] bg-[#F5F5F0] text-[#0A0A0A] font-medium" style={fontJ}>Card to Reels</button>
+              <button onClick={() => shareCard('1:1')} className="flex-1 py-3.5 rounded-full text-[10px] tracking-widest uppercase transition-all active:scale-[0.98] border border-[#F5F5F0]/30 text-[#F5F5F0]/60 hover:text-[#F5F5F0]" style={fontJ}>Card to Post</button>
             </div>
             <button onClick={() => { navigator.clipboard.writeText(shareUrl).then(() => { setCopied(true); setTimeout(() => setCopied(false), 2000) }).catch(() => {}) }} className="w-full py-3 rounded-full text-[10px] tracking-widest uppercase transition-all active:scale-[0.98] border border-[#F5F5F0]/20 text-[#F5F5F0]/40 hover:text-[#F5F5F0]" style={fontJ}>{copied ? 'Copied!' : 'Copy Link'}</button>
           </div>
@@ -197,23 +281,24 @@ export default function EOWApp() {
             <div className="flex gap-2 w-full">
               <button
                 onClick={shareToReels}
-                disabled={sharing}
-                className={`flex-1 py-3 rounded-full text-[9px] tracking-widest uppercase transition-all active:scale-[0.98] font-medium ${sharing ? 'bg-[#F5F5F0] text-[#0A0A0A] animate-pulse' : 'bg-[#F5F5F0]/20 text-[#F5F5F0]/40 hover:bg-[#F5F5F0] hover:text-[#0A0A0A]'}`}
+                disabled={phase === 'playing' || sharing}
+                className={`flex-1 py-3 rounded-full text-[9px] tracking-widest uppercase transition-all active:scale-[0.98] font-medium ${phase === 'playing' ? 'bg-[#F5F5F0]/10 text-[#F5F5F0]/20' : sharing ? 'bg-[#F5F5F0] text-[#0A0A0A] animate-pulse' : 'bg-[#F5F5F0] text-[#0A0A0A] hover:bg-[#E0E0D8]'}`}
                 style={fontJ}
               >
                 {sharing ? '...' : 'Video to Reels'}
               </button>
               <button
                 onClick={() => setPhase('share')}
-                className="flex-1 py-3 rounded-full text-[9px] tracking-widest uppercase transition-all active:scale-[0.98] font-medium bg-[#F5F5F0]/20 text-[#F5F5F0]/40 hover:bg-[#F5F5F0] hover:text-[#0A0A0A]"
+                disabled={phase === 'playing'}
+                className={`flex-1 py-3 rounded-full text-[9px] tracking-widest uppercase transition-all active:scale-[0.98] font-medium ${phase === 'playing' ? 'bg-[#F5F5F0]/10 text-[#F5F5F0]/20' : 'bg-[#F5F5F0] text-[#0A0A0A] hover:bg-[#E0E0D8]'}`}
                 style={fontJ}
               >
                 Card to Reels
               </button>
             </div>
             <div className="flex gap-3 w-full">
-              <button onClick={() => play(playingText)} className="flex-1 py-2.5 rounded-full text-[10px] tracking-widest uppercase border border-[#F5F5F0]/20 text-[#F5F5F0]/40 hover:border-[#F5F5F0]/60 hover:text-[#F5F5F0] transition-all" style={fontJ}>Replay</button>
-              <button onClick={resetToIdle} className="flex-1 py-2.5 rounded-full text-[10px] tracking-widest uppercase border border-[#F5F5F0]/20 text-[#F5F5F0]/40 hover:border-[#F5F5F0]/60 hover:text-[#F5F5F0] transition-all" style={fontJ}>New</button>
+              <button onClick={() => play(playingText)} className="flex-1 py-2.5 rounded-full text-[10px] tracking-widest uppercase border border-[#F5F5F0]/30 text-[#F5F5F0]/50 hover:border-[#F5F5F0]/60 hover:text-[#F5F5F0] transition-all" style={fontJ}>Replay</button>
+              <button onClick={resetToIdle} className="flex-1 py-2.5 rounded-full text-[10px] tracking-widest uppercase border border-[#F5F5F0]/30 text-[#F5F5F0]/50 hover:border-[#F5F5F0]/60 hover:text-[#F5F5F0] transition-all" style={fontJ}>New</button>
             </div>
           </div>
         </div>
