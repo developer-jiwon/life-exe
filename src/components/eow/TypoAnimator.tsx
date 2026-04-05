@@ -235,7 +235,7 @@ function renderFrame(ctx: CanvasRenderingContext2D, w: number, h: number, text: 
     const pillPadX = Math.round(pillFs * 1.3)
     const pillPadY = Math.round(pillFs * 0.6)
     const pillGap = Math.round(pillFs * 0.8)
-    const pillY = Math.round(h * 0.28) + (isReels ? Math.round(w * 0.045) : Math.round(Math.min(w, h) * 0.045)) * 1.3 + Math.round(pillFs * 2)
+    const pillY = Math.round(h * 0.88)
 
     ctx.save()
     ctx.textAlign = 'center'
