@@ -224,7 +224,7 @@ export default function EOWApp() {
   // ─── IDLE ───
   return (
     <div className="min-h-screen bg-[#0A0A0A]">
-      <div className="max-w-[480px] mx-auto px-5 py-4 flex items-center justify-between">
+      <div className="max-w-[720px] mx-auto px-5 py-4 flex items-center justify-between">
         <a href="/" className="text-[10px] text-[#444] tracking-wider uppercase hover:text-[#666] transition-colors" style={fontJ}>Life.exe</a>
         <span className="text-[10px] text-[#333] tracking-wider" style={fontJ}>@jiwonnnnieee</span>
       </div>
@@ -232,8 +232,8 @@ export default function EOWApp() {
       <div className="flex flex-col items-center justify-center px-6 pt-16 pb-20">
         <div className="w-full max-w-[480px]">
           <div className="text-center mb-10">
-            <h1 className="text-[26px] tracking-[0.3em] uppercase text-[#666] mb-2.5" style={fontJ}>End Of What</h1>
-            <p className="text-[11px] text-[#444]">마지막으로 남길 한 문장</p>
+            <h1 className="text-[26px] tracking-[0.3em] uppercase text-[#C0C0C0] mb-2.5" style={fontJ}>End Of What</h1>
+            <p className="text-[11px] text-[#888]">마지막으로 남길 한 문장</p>
           </div>
 
           <div className="relative mb-8">
@@ -264,7 +264,7 @@ export default function EOWApp() {
         </div>
       </div>
 
-      <div className="max-w-[480px] mx-auto px-5"><div className="border-t border-[#1A1A1A]" /></div>
+      <div className="max-w-[720px] mx-auto px-5"><div className="border-t border-[#1A1A1A]" /></div>
 
       <div className="text-center pt-10 pb-6">
         <p className="text-[10px] tracking-[0.2em] uppercase text-[#444]" style={fontJ}>Others</p>
