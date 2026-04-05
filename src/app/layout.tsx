@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next"
-import { Plus_Jakarta_Sans } from "next/font/google"
+import { Plus_Jakarta_Sans, Cormorant_Garamond, Noto_Serif_KR } from "next/font/google"
 import localFont from "next/font/local"
 import "./globals.css"
 
@@ -7,6 +7,20 @@ const jakarta = Plus_Jakarta_Sans({
   subsets: ["latin"],
   variable: "--font-jakarta",
   weight: ["400", "500", "600", "700"],
+})
+
+const cormorant = Cormorant_Garamond({
+  subsets: ["latin"],
+  variable: "--font-cormorant",
+  weight: ["300", "400", "500", "600", "700"],
+})
+
+const notoSerifKR = Noto_Serif_KR({
+  subsets: ["latin"],
+  variable: "--font-noto-serif",
+  weight: ["300", "400", "500", "600", "700"],
+  preload: true,
+  display: 'swap',
 })
 
 const pretendard = localFont({
@@ -51,8 +65,10 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="ko" className={`${jakarta.variable} ${pretendard.variable}`}>
-      {/* AdSense — 도메인 승인 후 활성화. ca-pub-4588308927468413 */}
+    <html lang="ko" className={`${jakarta.variable} ${pretendard.variable} ${cormorant.variable} ${notoSerifKR.variable}`}>
+      <head>
+        <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4588308927468413" crossOrigin="anonymous" />
+      </head>
       <body className="min-h-screen">{children}</body>
     </html>
   )

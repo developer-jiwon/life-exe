@@ -179,7 +179,7 @@ export default function EOWApp() {
             <textarea
               value={text}
               onChange={(e) => { setText(e.target.value.slice(0, 100)); playTypeClick() }}
-              onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); play() } }}
+              onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey && !('ontouchstart' in window)) { e.preventDefault(); play() } }}
               placeholder="여기에 쓰세요"
               maxLength={100}
               rows={3}

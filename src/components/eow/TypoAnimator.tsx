@@ -203,23 +203,23 @@ function renderFrame(ctx: CanvasRenderingContext2D, w: number, h: number, text: 
   // Watermark — "End Of What" title + two bookmarks
   if (t > 0.5) {
     // Title watermark — matches main page layout, positioned below bookmarks
-    const titleFade = Math.min(1, (t - 0.5) * 0.4)
-    const titleFs = isReels ? Math.round(w * 0.038) : Math.round(Math.min(w, h) * 0.035)
-    const subFs = isReels ? Math.round(w * 0.018) : Math.round(Math.min(w, h) * 0.018)
-    const titleY = Math.round(h * 0.30)
+    const titleFade = Math.min(1, (t - 0.5) * 0.5)
+    const titleFs = isReels ? Math.round(w * 0.045) : Math.round(Math.min(w, h) * 0.045)
+    const subFs = isReels ? Math.round(w * 0.024) : Math.round(Math.min(w, h) * 0.024)
+    const titleY = Math.round(h * 0.28)
     ctx.save()
     ctx.textAlign = 'center'
     ctx.fillStyle = '#F5F5F0'
     // End Of What — large tracking like main page
-    ctx.globalAlpha = titleFade * 0.45
+    ctx.globalAlpha = titleFade * 0.6
     ctx.font = getSansFont(400, titleFs)
     ctx.letterSpacing = `${titleFs * 0.3}px`
     ctx.fillText('E N D  O F  W H A T', w / 2, titleY)
     // 오늘의 한 줄을 남겨보세요
-    ctx.globalAlpha = titleFade * 0.3
+    ctx.globalAlpha = titleFade * 0.4
     ctx.font = getSansFont(400, subFs)
     ctx.letterSpacing = '0px'
-    ctx.fillText('오늘의 한 줄을 남겨보세요', w / 2, titleY + titleFs * 1.2)
+    ctx.fillText('오늘의 한 줄을 남겨보세요', w / 2, titleY + titleFs * 1.3)
     ctx.restore()
     ctx.textAlign = 'start'; ctx.globalAlpha = 1
   }
@@ -349,7 +349,7 @@ export default function TypoAnimator({ text, style, onComplete, isPlaying }: Typ
     const dpr = window.devicePixelRatio || 1
     const w = c.width / dpr; const h = c.height / dpr
 
-    dustRef.current = createDust(w, h, 35)
+    dustRef.current = createDust(w, h, 60)
     startRef.current = performance.now()
     doneRef.current = false
     blobRef.current = null
@@ -364,7 +364,7 @@ export default function TypoAnimator({ text, style, onComplete, isPlaying }: Typ
     recCanvas.width = 1080; recCanvas.height = 1920
     recCanvasRef.current = recCanvas
     const recCtx = recCanvas.getContext('2d')
-    recDustRef.current = createDust(1080, 1920, 50)
+    recDustRef.current = createDust(1080, 1920, 80)
     chunksRef.current = []
 
     let recorder: MediaRecorder | null = null
