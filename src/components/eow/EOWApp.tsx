@@ -162,8 +162,11 @@ export default function EOWApp() {
             </div>
           </div>
           <div className="mt-10 flex flex-col gap-3">
-            <button onClick={shareCard} className="w-full py-3.5 rounded-full text-[10px] tracking-widest uppercase transition-all active:scale-[0.98] bg-[#F5F5F0] text-[#0A0A0A] font-medium" style={fontJ}>Share Card</button>
-            <button onClick={() => { navigator.clipboard.writeText(shareUrl).then(() => { setCopied(true); setTimeout(() => setCopied(false), 2000) }).catch(() => {}) }} className="w-full py-3 rounded-full text-[10px] tracking-widest uppercase transition-all active:scale-[0.98] border border-[#F5F5F0]/30 text-[#F5F5F0]/60 hover:text-[#F5F5F0]" style={fontJ}>{copied ? 'Copied!' : 'Copy Link'}</button>
+            <div className="flex gap-3 w-full">
+              <button onClick={shareCard} className="flex-1 py-3.5 rounded-full text-[10px] tracking-widest uppercase transition-all active:scale-[0.98] bg-[#F5F5F0] text-[#0A0A0A] font-medium" style={fontJ}>Card to Reels</button>
+              <button onClick={shareCard} className="flex-1 py-3.5 rounded-full text-[10px] tracking-widest uppercase transition-all active:scale-[0.98] border border-[#F5F5F0]/30 text-[#F5F5F0]/60 hover:text-[#F5F5F0]" style={fontJ}>Card to Post</button>
+            </div>
+            <button onClick={() => { navigator.clipboard.writeText(shareUrl).then(() => { setCopied(true); setTimeout(() => setCopied(false), 2000) }).catch(() => {}) }} className="w-full py-3 rounded-full text-[10px] tracking-widest uppercase transition-all active:scale-[0.98] border border-[#F5F5F0]/20 text-[#F5F5F0]/40 hover:text-[#F5F5F0]" style={fontJ}>{copied ? 'Copied!' : 'Copy Link'}</button>
           </div>
           <div className="mt-8 flex justify-center gap-6">
             <button onClick={() => play(playingText)} className="text-[10px] text-[#555] hover:text-[#999] tracking-wider uppercase" style={fontJ}>Replay</button>
@@ -191,21 +194,21 @@ export default function EOWApp() {
 
         <div className="fixed inset-0 z-[60] flex flex-col items-center justify-end pb-14 pointer-events-none">
           <div className="flex flex-col items-center gap-3 w-full max-w-[320px] px-4 pointer-events-auto">
-            <div className="flex gap-3 w-full">
+            <div className="flex gap-2 w-full">
               <button
                 onClick={shareToReels}
                 disabled={sharing}
-                className={`flex-1 py-3 rounded-full text-[10px] tracking-widest uppercase transition-all active:scale-[0.98] font-medium ${sharing ? 'bg-[#F5F5F0] text-[#0A0A0A] animate-pulse' : 'bg-[#F5F5F0]/20 text-[#F5F5F0]/40 hover:bg-[#F5F5F0] hover:text-[#0A0A0A]'}`}
+                className={`flex-1 py-3 rounded-full text-[9px] tracking-widest uppercase transition-all active:scale-[0.98] font-medium ${sharing ? 'bg-[#F5F5F0] text-[#0A0A0A] animate-pulse' : 'bg-[#F5F5F0]/20 text-[#F5F5F0]/40 hover:bg-[#F5F5F0] hover:text-[#0A0A0A]'}`}
                 style={fontJ}
               >
-                {sharing ? 'Almost ready...' : 'Video'}
+                {sharing ? '...' : 'Video to Reels'}
               </button>
               <button
                 onClick={() => setPhase('share')}
-                className="flex-1 py-3 rounded-full text-[10px] tracking-widest uppercase transition-all active:scale-[0.98] font-medium bg-[#F5F5F0]/20 text-[#F5F5F0]/40 hover:bg-[#F5F5F0] hover:text-[#0A0A0A]"
+                className="flex-1 py-3 rounded-full text-[9px] tracking-widest uppercase transition-all active:scale-[0.98] font-medium bg-[#F5F5F0]/20 text-[#F5F5F0]/40 hover:bg-[#F5F5F0] hover:text-[#0A0A0A]"
                 style={fontJ}
               >
-                Card
+                Card to Reels
               </button>
             </div>
             <div className="flex gap-3 w-full">
