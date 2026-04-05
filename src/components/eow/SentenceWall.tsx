@@ -100,8 +100,8 @@ export default function SentenceWall({ onSentenceClick, refreshKey }: SentenceWa
   }, [refreshKey])
 
   return (
-    <div className="w-full max-w-[720px] mx-auto px-4">
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+    <div className="w-full px-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         {sentences.map((sentence, i) => (
           <TicketCard
             key={`${sentence}-${i}`}
