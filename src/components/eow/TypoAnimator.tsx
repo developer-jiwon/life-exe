@@ -237,7 +237,7 @@ function renderFrame(ctx: CanvasRenderingContext2D, w: number, h: number, text: 
     ctx.fillStyle = '#F5F5F0'
     ctx.textAlign = 'right'
     ctx.font = getSansFont(500, fs)
-    ctx.fillText('@jiwonnnnieee', w - Math.round(w * 0.06), Math.round(h * 0.08))
+    ctx.fillText('@jiwonnnnieee', w - Math.round(w * 0.1), Math.round(h * 0.11))
     ctx.restore()
     ctx.textAlign = 'start'; ctx.globalAlpha = 1
   }
