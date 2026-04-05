@@ -200,75 +200,91 @@ function renderFrame(ctx: CanvasRenderingContext2D, w: number, h: number, text: 
     case 'whisper': done = renderWhisper(ctx, w, h, text, words, t, dust); break
   }
 
-  // Watermark — always show
-  if (t > 1.0) {
-    ctx.textAlign = 'center'; ctx.fillStyle = '#F5F5F0'
-    const fadeIn = Math.min(1, (t - 1.0) * 0.4)
+  // Watermark — "End Of What" title + two bookmarks
+  if (t > 0.5) {
+    // Title watermark — subtle, top center
+    const titleFade = Math.min(1, (t - 0.5) * 0.4)
+    const titleFs = isReels ? Math.round(w * 0.022) : Math.round(Math.min(w, h) * 0.024)
+    ctx.save()
+    ctx.globalAlpha = titleFade * 0.25
+    ctx.fillStyle = '#F5F5F0'
+    ctx.textAlign = 'center'
+    ctx.font = getSansFont(400, titleFs)
+    ctx.letterSpacing = '0.15em'
+    ctx.fillText('End Of What', w / 2, Math.round(h * 0.05))
+    ctx.restore()
+    ctx.textAlign = 'start'; ctx.globalAlpha = 1
+  }
 
-    if (isReels) {
-      const s = Math.round(w * 0.026)
-      // Top: End Of What
-      ctx.globalAlpha = fadeIn * 0.25
-      ctx.font = getSansFont(500, s)
-      ctx.fillText('End Of What', w / 2, h * 0.055)
-      // Tagline
-      ctx.globalAlpha = fadeIn * 0.15
-      ctx.font = getSansFont(400, Math.round(s * 0.55))
-      ctx.fillText('마지막 한 문장을 써보세요', w / 2, h * 0.055 + s * 1.2)
-      // Bottom: @jiwonnnnieee pill
-      const pillFont = Math.round(s * 0.9)
-      const pillText = '@jiwonnnnieee'
-      ctx.font = getSansFont(600, pillFont)
-      const pillW = ctx.measureText(pillText).width + pillFont * 2.5
-      const pillH = pillFont * 2.2
-      const pillX = (w - pillW) / 2
-      const pillY = h - s * 5.5
-      // Pill background
-      ctx.globalAlpha = fadeIn * 0.35
-      ctx.fillStyle = '#F5F5F0'
-      const r = pillH / 2
-      ctx.beginPath()
-      ctx.moveTo(pillX + r, pillY); ctx.lineTo(pillX + pillW - r, pillY)
-      ctx.arc(pillX + pillW - r, pillY + r, r, -Math.PI / 2, Math.PI / 2)
-      ctx.lineTo(pillX + r, pillY + pillH)
-      ctx.arc(pillX + r, pillY + r, r, Math.PI / 2, -Math.PI / 2)
-      ctx.closePath(); ctx.fill()
-      // Pill text
-      ctx.globalAlpha = fadeIn * 0.9
-      ctx.fillStyle = '#0A0A0A'
-      ctx.font = getSansFont(600, pillFont)
-      ctx.fillText(pillText, w / 2, pillY + pillH * 0.68)
-      // URL pill below
-      const urlFont = Math.round(s * 0.6)
-      const urlText = 'so.now-then.dev/eow'
-      ctx.font = getSansFont(400, urlFont)
-      const urlPillW = ctx.measureText(urlText).width + urlFont * 2.5
-      const urlPillH = urlFont * 2.2
-      const urlPillX = (w - urlPillW) / 2
-      const urlPillY = pillY + pillH + s * 0.6
-      ctx.globalAlpha = fadeIn * 0.2
-      ctx.fillStyle = '#F5F5F0'
-      ctx.beginPath()
-      const ur = urlPillH / 2
-      ctx.moveTo(urlPillX + ur, urlPillY); ctx.lineTo(urlPillX + urlPillW - ur, urlPillY)
-      ctx.arc(urlPillX + urlPillW - ur, urlPillY + ur, ur, -Math.PI / 2, Math.PI / 2)
-      ctx.lineTo(urlPillX + ur, urlPillY + urlPillH)
-      ctx.arc(urlPillX + ur, urlPillY + ur, ur, Math.PI / 2, -Math.PI / 2)
-      ctx.closePath(); ctx.fill()
-      ctx.globalAlpha = fadeIn * 0.7
-      ctx.fillStyle = '#F5F5F0'
-      ctx.font = getSansFont(400, urlFont)
-      ctx.fillText(urlText, w / 2, urlPillY + urlPillH * 0.68)
-    } else {
-      // Normal playback — also show branding
-      const a = fadeIn * 0.22
-      ctx.globalAlpha = a
-      ctx.font = getSansFont(400, 10)
-      ctx.fillText('End Of What', w / 2, h - 38)
-      ctx.globalAlpha = a * 0.9
-      ctx.font = getSansFont(500, 9)
-      ctx.fillText('@jiwonnnnieee', w / 2, h - 22)
-    }
+  if (t > 1.0) {
+    const fs = isReels ? Math.round(w * 0.019) : Math.round(Math.min(w, h) * 0.02)
+    const padX = Math.round(fs * 1.0)
+    const padY = Math.round(fs * 0.7)
+    const notch = Math.round(fs * 0.45)
+
+    // ─── Bookmark 1: @jiwonnnnieee ───
+    const fadeIn1 = Math.min(1, (t - 1.0) * 0.6)
+    const slide1 = easeOutCubic(Math.min(1, (t - 1.0) * 0.8))
+
+    ctx.save()
+    ctx.font = getSansFont(500, fs)
+    const t1 = '@jiwonnnnieee'
+    const t1W = ctx.measureText(t1).width
+    const b1W = t1W + padX * 2
+    const b1H = fs + padY * 2
+    const b1X = Math.round(w * 0.05)
+    const b1FullH = b1H + notch
+    const b1Y = slide1 * b1FullH - b1FullH
+
+    ctx.globalAlpha = fadeIn1 * 0.7
+    ctx.fillStyle = '#F5F5F0'
+    ctx.beginPath()
+    ctx.moveTo(b1X, 0)
+    ctx.lineTo(b1X + b1W, 0)
+    ctx.lineTo(b1X + b1W, b1Y + b1H)
+    ctx.lineTo(b1X + b1W / 2, b1Y + b1H + notch)
+    ctx.lineTo(b1X, b1Y + b1H)
+    ctx.closePath()
+    ctx.fill()
+
+    ctx.globalAlpha = fadeIn1 * 0.9
+    ctx.fillStyle = '#0A0A0A'
+    ctx.textAlign = 'center'
+    ctx.font = getSansFont(500, fs)
+    ctx.fillText(t1, b1X + b1W / 2, b1Y + padY + fs * 0.88)
+    ctx.restore()
+
+    // ─── Bookmark 2: URL (delayed) ───
+    const fadeIn2 = Math.min(1, Math.max(0, t - 1.4) * 0.6)
+    const slide2 = easeOutCubic(Math.min(1, Math.max(0, t - 1.4) * 0.8))
+
+    ctx.save()
+    ctx.font = getSansFont(400, fs)
+    const t2 = 'so.now-then.dev/eow'
+    const t2W = ctx.measureText(t2).width
+    const b2W = t2W + padX * 2
+    const b2H = fs + padY * 2
+    const b2X = b1X + b1W + Math.round(fs * 0.6)
+    const b2FullH = b2H + notch
+    const b2Y = slide2 * b2FullH - b2FullH
+
+    ctx.globalAlpha = fadeIn2 * 0.5
+    ctx.fillStyle = '#F5F5F0'
+    ctx.beginPath()
+    ctx.moveTo(b2X, 0)
+    ctx.lineTo(b2X + b2W, 0)
+    ctx.lineTo(b2X + b2W, b2Y + b2H)
+    ctx.lineTo(b2X + b2W / 2, b2Y + b2H + notch)
+    ctx.lineTo(b2X, b2Y + b2H)
+    ctx.closePath()
+    ctx.fill()
+
+    ctx.globalAlpha = fadeIn2 * 0.7
+    ctx.fillStyle = '#0A0A0A'
+    ctx.textAlign = 'center'
+    ctx.font = getSansFont(400, fs)
+    ctx.fillText(t2, b2X + b2W / 2, b2Y + padY + fs * 0.88)
+    ctx.restore()
 
     ctx.textAlign = 'start'; ctx.globalAlpha = 1
   }
@@ -288,6 +304,9 @@ export default function TypoAnimator({ text, style, onComplete, isPlaying }: Typ
   const chunksRef = useRef<Blob[]>([])
   const recCanvasRef = useRef<HTMLCanvasElement | null>(null)
   const blobRef = useRef<Blob | null>(null)
+  const mountedRef = useRef(true)
+  const onCompleteRef = useRef(onComplete)
+  onCompleteRef.current = onComplete
 
   // Canvas sizing
   useEffect(() => {
@@ -301,6 +320,15 @@ export default function TypoAnimator({ text, style, onComplete, isPlaying }: Typ
     resize()
     window.addEventListener('resize', resize)
     return () => window.removeEventListener('resize', resize)
+  }, [])
+
+  // Cleanup on unmount only
+  useEffect(() => {
+    mountedRef.current = true
+    return () => {
+      mountedRef.current = false
+      cancelAnimationFrame(animRef.current)
+    }
   }, [])
 
   // ─── Play + background record ───
@@ -321,6 +349,7 @@ export default function TypoAnimator({ text, style, onComplete, isPlaying }: Typ
     const words = splitWords(text)
     const fullText = words.join(' ')
     let lastSoundIdx = -1
+    let recStopped = false
 
     // Setup background 9:16 recording
     const recCanvas = document.createElement('canvas')
@@ -347,29 +376,33 @@ export default function TypoAnimator({ text, style, onComplete, isPlaying }: Typ
     } catch { /* recording not supported */ }
 
     const frame = (now: number) => {
+      if (!mountedRef.current) return
+
       const t = ((now - startRef.current) / 1000) * SPEED
       ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.scale(dpr, dpr)
 
-      // Sounds
-      if (style === 'cinema') {
-        const idx = Math.floor(t / 0.8)
-        if (idx > lastSoundIdx && idx < words.length) { lastSoundIdx = idx; playCinemaReveal() }
-      } else if (style === 'typewriter') {
-        const idx = Math.floor(t / 0.08)
-        if (idx > lastSoundIdx && idx < fullText.length) { lastSoundIdx = idx; playTypewriterClack() }
-      } else if (style === 'flicker') {
-        if (lastSoundIdx === -1 && t > 0.1) { lastSoundIdx = 0; playFlickerTick() }
-      } else if (style === 'whisper') {
-        const idx = Math.floor(t / 0.06)
-        if (idx > lastSoundIdx && idx < fullText.length && idx % 3 === 0) { lastSoundIdx = idx; playWhisperBreath() }
+      // Sounds (only while not done)
+      if (!doneRef.current) {
+        if (style === 'cinema') {
+          const idx = Math.floor(t / 0.8)
+          if (idx > lastSoundIdx && idx < words.length) { lastSoundIdx = idx; playCinemaReveal() }
+        } else if (style === 'typewriter') {
+          const idx = Math.floor(t / 0.08)
+          if (idx > lastSoundIdx && idx < fullText.length) { lastSoundIdx = idx; playTypewriterClack() }
+        } else if (style === 'flicker') {
+          if (lastSoundIdx === -1 && t > 0.1) { lastSoundIdx = 0; playFlickerTick() }
+        } else if (style === 'whisper') {
+          const idx = Math.floor(t / 0.06)
+          if (idx > lastSoundIdx && idx < fullText.length && idx % 3 === 0) { lastSoundIdx = idx; playWhisperBreath() }
+        }
       }
 
-      // Render main canvas
+      // Render main canvas (keeps rendering after done = last frame stays)
       tickDust(dustRef.current, w, h)
       const done = renderFrame(ctx, w, h, text, style, t, dustRef.current, false)
 
-      // Render recording canvas in parallel
-      if (recCtx) {
+      // Render recording canvas in parallel (only while not done)
+      if (recCtx && !recStopped) {
         recCtx.setTransform(1, 0, 0, 1, 0, 0)
         tickDust(recDustRef.current, 1080, 1920)
         renderFrame(recCtx, 1080, 1920, text, style, t, recDustRef.current, true)
@@ -377,28 +410,25 @@ export default function TypoAnimator({ text, style, onComplete, isPlaying }: Typ
 
       if (done && !doneRef.current) {
         doneRef.current = true
-        // Hold final frame on recording for 1.5s then stop
         setTimeout(() => {
+          recStopped = true
           if (recorder && recorder.state !== 'inactive') recorder.stop()
-          // Wait a bit for blob to be ready, then call onComplete
-          setTimeout(() => onComplete?.(blobRef.current), 200)
-        }, 1500)
+          setTimeout(() => onCompleteRef.current?.(blobRef.current), 100)
+        }, 600)
       }
 
-      if (!doneRef.current) {
-        animRef.current = requestAnimationFrame(frame)
-      } else {
-        // Keep rendering main canvas (frozen last frame)
-        animRef.current = requestAnimationFrame(frame)
-      }
+      // Always keep rendering so canvas never goes blank
+      animRef.current = requestAnimationFrame(frame)
     }
 
     animRef.current = requestAnimationFrame(frame)
+
+    // Don't cancel animation on isPlaying change — only on unmount
     return () => {
-      cancelAnimationFrame(animRef.current)
       if (recorder && recorder.state !== 'inactive') recorder.stop()
     }
-  }, [isPlaying, text, style, onComplete])
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isPlaying, text, style])
 
   return (
     <canvas

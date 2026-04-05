@@ -10,6 +10,7 @@ import { saveSentence } from '@/lib/eow-storage'
 export default function EOWApp() {
   const [text, setText] = useState('')
   const [phase, setPhase] = useState<'notice' | 'idle' | 'playing' | 'done' | 'share'>('notice')
+  const [reelsReady, setReelsReady] = useState(false)
   const [playingText, setPlayingText] = useState('')
   const [copied, setCopied] = useState(false)
   const [playKey, setPlayKey] = useState(0)
@@ -37,6 +38,7 @@ export default function EOWApp() {
     setPlayingText(val)
     setPlayKey(prev => prev + 1)
     reelsBlobRef.current = null
+    setReelsReady(false)
     setPhase('playing')
   }, [text])
 
@@ -46,6 +48,7 @@ export default function EOWApp() {
 
   const handleComplete = useCallback((blob: Blob | null) => {
     reelsBlobRef.current = blob
+    setReelsReady(true)
     setPhase('done')
   }, [])
 
@@ -140,7 +143,7 @@ export default function EOWApp() {
             <div className="flex flex-col items-center gap-3 w-full max-w-[320px] px-4">
               <button
                 onClick={shareToReels}
-                className="w-full py-3 rounded-full text-[10px] tracking-widest uppercase transition-all active:scale-[0.98] bg-[#F5F5F0] text-[#0A0A0A] font-medium"
+                className="w-full py-3 rounded-full text-[10px] tracking-widest uppercase transition-all active:scale-[0.98] font-medium bg-[#F5F5F0] text-[#0A0A0A]"
                 style={fontJ}
               >
                 Share to Reels
@@ -162,7 +165,7 @@ export default function EOWApp() {
     <div className="min-h-screen bg-[#0A0A0A]">
       <div className="max-w-[720px] mx-auto px-5 py-4 flex items-center justify-between">
         <a href="/" className="text-[10px] text-[#444] tracking-wider uppercase hover:text-[#666] transition-colors" style={fontJ}>Life.exe</a>
-        <span className="text-[10px] tracking-wider px-3 py-1.5 rounded-full bg-[#F5F5F0] text-[#0A0A0A] font-medium" style={fontJ}>@jiwonnnnieee</span>
+        <a href="https://www.threads.com/@jiwonnnnieee" target="_blank" rel="noopener noreferrer" className="text-[10px] tracking-wider px-3 py-1.5 rounded-full bg-[#F5F5F0] text-[#0A0A0A] font-medium hover:bg-[#E0E0D8] transition-colors" style={fontJ}>@jiwonnnnieee</a>
       </div>
 
       <div className="flex flex-col items-center justify-center px-6 pt-16 pb-20">
@@ -181,14 +184,13 @@ export default function EOWApp() {
               maxLength={100}
               rows={3}
               autoFocus
-              className="w-full bg-transparent text-[#F5F5F0] text-center text-[22px] font-bold leading-relaxed placeholder:text-[#2A2A2A] border-none outline-none resize-none caret-[#555] font-[var(--font-noto-serif)]"
-              style={{ fontFamily: '"Noto Serif KR", "Cormorant Garamond", Georgia, serif' }}
+              className="eow-serif w-full bg-transparent text-[#F5F5F0] text-center text-[22px] font-medium leading-relaxed placeholder:text-[#2A2A2A] border-none outline-none resize-none caret-[#555]"
             />
             <div className="absolute -bottom-4 right-0 text-[9px] text-[#333]" style={fontJ}>{text.length}/100</div>
           </div>
 
           <div className="text-center">
-            <button onClick={() => play()} className="px-8 py-2.5 text-[11px] tracking-widest uppercase border border-[#F5F5F0] text-[#F5F5F0] rounded-full hover:bg-[#F5F5F0] hover:text-[#0A0A0A] active:scale-95 transition-all duration-300 select-none" style={fontJ}>Play</button>
+            <button onMouseDown={(e) => { e.preventDefault(); play() }} className="px-8 py-2.5 text-[11px] tracking-widest uppercase border border-[#F5F5F0] text-[#F5F5F0] rounded-full hover:bg-[#F5F5F0] hover:text-[#0A0A0A] active:scale-95 transition-all duration-300 select-none" style={fontJ}>Play</button>
             <p className="text-[9px] text-[#333] mt-3">Enter ↵ · Shift+Enter 줄바꿈</p>
           </div>
         </div>
