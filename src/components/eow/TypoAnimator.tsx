@@ -235,7 +235,7 @@ function renderFrame(ctx: CanvasRenderingContext2D, w: number, h: number, text: 
     const pillPadX = Math.round(pillFs * 1.3)
     const pillPadY = Math.round(pillFs * 0.6)
     const pillGap = Math.round(pillFs * 0.8)
-    const pillY = Math.round(h * 0.75)
+    const pillY = Math.round(h * 0.28) - pillH * 2 - Math.round(pillFs * 1.5)
 
     ctx.save()
     ctx.textAlign = 'center'
@@ -247,44 +247,44 @@ function renderFrame(ctx: CanvasRenderingContext2D, w: number, h: number, text: 
     const p2Text = 'so.now-then.dev/eow'
     const p2W = ctx.measureText(p2Text).width + pillPadX * 2
     const pillH = pillFs + pillPadY * 2
-    const r = Math.round(pillFs * 0.4)
+    const r = pillH / 2
 
-    // Helper: draw rounded rect
-    const drawRoundedRect = (x: number, y: number, rw: number, rh: number) => {
+    // Helper: draw pill
+    const drawPill = (x: number, y: number, pw: number, ph: number) => {
+      const pr = ph / 2
       ctx.beginPath()
-      ctx.moveTo(x + r, y); ctx.lineTo(x + rw - r, y)
-      ctx.arc(x + rw - r, y + r, r, -Math.PI / 2, 0)
-      ctx.lineTo(x + rw, y + rh - r)
-      ctx.arc(x + rw - r, y + rh - r, r, 0, Math.PI / 2)
-      ctx.lineTo(x + r, y + rh)
-      ctx.arc(x + r, y + rh - r, r, Math.PI / 2, Math.PI)
-      ctx.lineTo(x, y + r)
-      ctx.arc(x + r, y + r, r, Math.PI, -Math.PI / 2)
+      ctx.moveTo(x + pr, y); ctx.lineTo(x + pw - pr, y)
+      ctx.arc(x + pw - pr, y + pr, pr, -Math.PI / 2, Math.PI / 2)
+      ctx.lineTo(x + pr, y + ph)
+      ctx.arc(x + pr, y + pr, pr, Math.PI / 2, -Math.PI / 2)
       ctx.closePath(); ctx.fill()
     }
 
-    // Pill 1: @jiwonnnnieee (centered)
-    const p1X = (w - p1W) / 2
+    // Both pills side by side, centered
+    const totalW = p1W + pillGap + p2W
+    const startX = (w - totalW) / 2
+
+    // Pill 1: @jiwonnnnieee
+    const p1X = startX
     ctx.globalAlpha = pillFade * 0.55
     ctx.fillStyle = '#F5F5F0'
-    drawRoundedRect(p1X, pillY, p1W, pillH)
+    drawPill(p1X, pillY, p1W, pillH)
 
     ctx.globalAlpha = pillFade * 0.75
     ctx.fillStyle = '#0A0A0A'
     ctx.font = getSansFont(600, pillFs)
-    ctx.fillText(p1Text, w / 2, pillY + pillH * 0.68)
+    ctx.fillText(p1Text, p1X + p1W / 2, pillY + pillH * 0.68)
 
-    // Pill 2: URL (centered, below pill 1)
-    const p2Y = pillY + pillH + pillGap
-    const p2X = (w - p2W) / 2
+    // Pill 2: URL
+    const p2X = startX + p1W + pillGap
     ctx.globalAlpha = pillFade * 0.35
     ctx.fillStyle = '#F5F5F0'
-    drawRoundedRect(p2X, p2Y, p2W, pillH)
+    drawPill(p2X, pillY, p2W, pillH)
 
     ctx.globalAlpha = pillFade * 0.6
     ctx.fillStyle = '#0A0A0A'
     ctx.font = getSansFont(400, pillFs)
-    ctx.fillText(p2Text, w / 2, p2Y + pillH * 0.68)
+    ctx.fillText(p2Text, p2X + p2W / 2, pillY + pillH * 0.68)
 
     ctx.restore()
     ctx.textAlign = 'start'; ctx.globalAlpha = 1
