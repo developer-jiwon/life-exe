@@ -228,104 +228,62 @@ function renderFrame(ctx: CanvasRenderingContext2D, w: number, h: number, text: 
     ctx.textAlign = 'start'; ctx.globalAlpha = 1
   }
 
+  // Pills below tagline — @jiwonnnnieee + URL
   if (t > 1.0) {
-    const fs = isReels ? Math.round(w * 0.024) : Math.round(Math.min(w, h) * 0.026)
-    const padX = Math.round(fs * 1.2)
-    const padY = Math.round(fs * 0.9)
-    const notch = Math.round(fs * 0.5)
-
-    // ─── Bookmark 1: @jiwonnnnieee ───
-    const fadeIn1 = Math.min(1, (t - 1.0) * 1.2)
-    const slide1 = easeOutCubic(Math.min(1, (t - 1.0) * 1.0))
+    const pillFade = Math.min(1, (t - 1.0) * 1.0)
+    const pillFs = isReels ? Math.round(w * 0.02) : Math.round(Math.min(w, h) * 0.02)
+    const pillPadX = Math.round(pillFs * 1.3)
+    const pillPadY = Math.round(pillFs * 0.6)
+    const pillGap = Math.round(pillFs * 0.8)
+    const pillY = Math.round(h * 0.28) + (isReels ? Math.round(w * 0.045) : Math.round(Math.min(w, h) * 0.045)) * 1.3 + Math.round(pillFs * 2)
 
     ctx.save()
-    ctx.font = getSansFont(600, fs)
-    const t1 = '@jiwonnnnieee'
-    const t1W = ctx.measureText(t1).width
-    const b1W = t1W + padX * 2
-    const b1H = fs + padY * 2
-    const b1X = Math.round(w * 0.05)
-    const b1FullH = b1H + notch
-    const b1Y = slide1 * b1FullH - b1FullH
+    ctx.textAlign = 'center'
 
-    // Shadow
-    ctx.globalAlpha = fadeIn1 * 0.3
-    ctx.fillStyle = '#000'
-    ctx.beginPath()
-    ctx.moveTo(b1X + 2, 0)
-    ctx.lineTo(b1X + b1W + 2, 0)
-    ctx.lineTo(b1X + b1W + 2, b1Y + b1H + 2)
-    ctx.lineTo(b1X + b1W / 2 + 2, b1Y + b1H + notch + 2)
-    ctx.lineTo(b1X + 2, b1Y + b1H + 2)
-    ctx.closePath()
-    ctx.fill()
+    // Measure both pills
+    ctx.font = getSansFont(500, pillFs)
+    const p1Text = '@jiwonnnnieee'
+    const p1W = ctx.measureText(p1Text).width + pillPadX * 2
+    const p2Text = 'so.now-then.dev/eow'
+    const p2W = ctx.measureText(p2Text).width + pillPadX * 2
+    const pillH = pillFs + pillPadY * 2
+    const totalW = p1W + pillGap + p2W
+    const startX = (w - totalW) / 2
+    const r = pillH / 2
 
-    // Ribbon
-    ctx.globalAlpha = fadeIn1 * 0.9
+    // Pill 1: @jiwonnnnieee
+    const p1X = startX
+    ctx.globalAlpha = pillFade * 0.8
     ctx.fillStyle = '#F5F5F0'
     ctx.beginPath()
-    ctx.moveTo(b1X, 0)
-    ctx.lineTo(b1X + b1W, 0)
-    ctx.lineTo(b1X + b1W, b1Y + b1H)
-    ctx.lineTo(b1X + b1W / 2, b1Y + b1H + notch)
-    ctx.lineTo(b1X, b1Y + b1H)
-    ctx.closePath()
-    ctx.fill()
+    ctx.moveTo(p1X + r, pillY); ctx.lineTo(p1X + p1W - r, pillY)
+    ctx.arc(p1X + p1W - r, pillY + r, r, -Math.PI / 2, Math.PI / 2)
+    ctx.lineTo(p1X + r, pillY + pillH)
+    ctx.arc(p1X + r, pillY + r, r, Math.PI / 2, -Math.PI / 2)
+    ctx.closePath(); ctx.fill()
 
-    // Text
-    ctx.globalAlpha = fadeIn1 * 0.95
+    ctx.globalAlpha = pillFade * 0.95
     ctx.fillStyle = '#0A0A0A'
-    ctx.textAlign = 'center'
-    ctx.font = getSansFont(600, fs)
-    ctx.fillText(t1, b1X + b1W / 2, b1Y + padY + fs * 0.88)
-    ctx.restore()
+    ctx.font = getSansFont(600, pillFs)
+    ctx.fillText(p1Text, p1X + p1W / 2, pillY + pillH * 0.68)
 
-    // ─── Bookmark 2: URL (delayed) ───
-    const fadeIn2 = Math.min(1, Math.max(0, t - 1.3) * 1.2)
-    const slide2 = easeOutCubic(Math.min(1, Math.max(0, t - 1.4) * 0.8))
-
-    ctx.save()
-    ctx.font = getSansFont(500, fs)
-    const t2 = 'so.now-then.dev/eow'
-    const t2W = ctx.measureText(t2).width
-    const b2W = t2W + padX * 2
-    const b2H = fs + padY * 2
-    const b2X = b1X + b1W + Math.round(fs * 0.6)
-    const b2FullH = b2H + notch
-    const b2Y = slide2 * b2FullH - b2FullH
-
-    // Shadow
-    ctx.globalAlpha = fadeIn2 * 0.25
-    ctx.fillStyle = '#000'
-    ctx.beginPath()
-    ctx.moveTo(b2X + 2, 0)
-    ctx.lineTo(b2X + b2W + 2, 0)
-    ctx.lineTo(b2X + b2W + 2, b2Y + b2H + 2)
-    ctx.lineTo(b2X + b2W / 2 + 2, b2Y + b2H + notch + 2)
-    ctx.lineTo(b2X + 2, b2Y + b2H + 2)
-    ctx.closePath()
-    ctx.fill()
-
-    // Ribbon
-    ctx.globalAlpha = fadeIn2 * 0.75
+    // Pill 2: URL
+    const p2X = startX + p1W + pillGap
+    ctx.globalAlpha = pillFade * 0.5
     ctx.fillStyle = '#F5F5F0'
     ctx.beginPath()
-    ctx.moveTo(b2X, 0)
-    ctx.lineTo(b2X + b2W, 0)
-    ctx.lineTo(b2X + b2W, b2Y + b2H)
-    ctx.lineTo(b2X + b2W / 2, b2Y + b2H + notch)
-    ctx.lineTo(b2X, b2Y + b2H)
-    ctx.closePath()
-    ctx.fill()
+    ctx.moveTo(p2X + r, pillY); ctx.lineTo(p2X + p2W - r, pillY)
+    ctx.arc(p2X + p2W - r, pillY + r, r, -Math.PI / 2, Math.PI / 2)
+    ctx.lineTo(p2X + r, pillY + pillH)
+    ctx.arc(p2X + r, pillY + r, r, Math.PI / 2, -Math.PI / 2)
+    ctx.closePath(); ctx.fill()
 
-    // Text
-    ctx.globalAlpha = fadeIn2 * 0.85
+    ctx.globalAlpha = pillFade * 0.8
     ctx.fillStyle = '#0A0A0A'
-    ctx.textAlign = 'center'
-    ctx.font = getSansFont(400, fs)
-    ctx.fillText(t2, b2X + b2W / 2, b2Y + padY + fs * 0.88)
-    ctx.restore()
+    ctx.font = getSansFont(400, pillFs)
+    ctx.fillText(p2Text, p2X + p2W / 2, pillY + pillH * 0.68)
 
+    ctx.restore()
     ctx.textAlign = 'start'; ctx.globalAlpha = 1
   }
 
