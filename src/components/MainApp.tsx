@@ -254,7 +254,13 @@ export default function MainApp() {
         {/* Parent section — Phase 2 */}
         {/* TODO: 부모님 생일 감성 팩트 (남은 시간, 설날, 식사, 전화, 여행) */}
 
-        <footer className="text-center text-[10px] text-[#C0C0C0] pb-4"><p>{t('every_moment', lang)}</p></footer>
+        <footer className="text-center pb-4 space-y-2">
+          <p className="text-[10px] text-[#C0C0C0]">{t('every_moment', lang)}</p>
+          <div className="flex justify-center gap-4">
+            <a href="/privacy" className="text-[9px] text-[#999] hover:text-[#CCC] transition-colors">개인정보처리방침</a>
+            <a href="/terms" className="text-[9px] text-[#999] hover:text-[#CCC] transition-colors">이용약관</a>
+          </div>
+        </footer>
       </div>
 
       <BirthDateSheet open={sheetOpen} onClose={() => setSheetOpen(false)} currentDate={data.birthDate} onSave={handleSave} lang={lang} onLangChange={handleLangChange} />
