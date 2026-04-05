@@ -279,16 +279,15 @@ export default function EOWApp() {
             <div className="flex gap-2 w-full">
               <button
                 onClick={shareToReels}
-                disabled={phase === 'playing' || sharing}
-                className={`flex-1 py-3 rounded-full text-[9px] tracking-widest uppercase transition-all active:scale-[0.98] font-medium ${phase === 'playing' ? 'bg-[#F5F5F0]/10 text-[#F5F5F0]/20' : sharing ? 'bg-[#F5F5F0] text-[#0A0A0A] animate-pulse' : 'bg-[#F5F5F0] text-[#0A0A0A] hover:bg-[#E0E0D8]'}`}
+                disabled={sharing}
+                className={`flex-1 py-3 rounded-full text-[9px] tracking-widest uppercase transition-all active:scale-[0.98] font-medium ${sharing ? 'bg-[#F5F5F0] text-[#0A0A0A] animate-pulse' : 'bg-[#F5F5F0] text-[#0A0A0A] hover:bg-[#E0E0D8]'}`}
                 style={fontJ}
               >
                 {sharing ? '...' : 'Video to Reels'}
               </button>
               <button
                 onClick={() => shareCard('9:16')}
-                disabled={phase === 'playing'}
-                className={`flex-1 py-3 rounded-full text-[9px] tracking-widest uppercase transition-all active:scale-[0.98] font-medium ${phase === 'playing' ? 'bg-[#F5F5F0]/10 text-[#F5F5F0]/20' : 'bg-[#F5F5F0] text-[#0A0A0A] hover:bg-[#E0E0D8]'}`}
+                className="flex-1 py-3 rounded-full text-[9px] tracking-widest uppercase transition-all active:scale-[0.98] font-medium bg-[#F5F5F0] text-[#0A0A0A] hover:bg-[#E0E0D8]"
                 style={fontJ}
               >
                 Card to Reels
