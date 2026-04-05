@@ -11,6 +11,7 @@ interface TypoAnimatorProps {
   text: string
   style: AnimationStyle
   onComplete?: (reelsBlob: Blob | null) => void
+  onAnimDone?: () => void
   isPlaying: boolean
 }
 
@@ -246,7 +247,7 @@ function renderFrame(ctx: CanvasRenderingContext2D, w: number, h: number, text: 
 }
 
 // ─── MAIN COMPONENT ───
-export default function TypoAnimator({ text, style, onComplete, isPlaying }: TypoAnimatorProps) {
+export default function TypoAnimator({ text, style, onComplete, onAnimDone, isPlaying }: TypoAnimatorProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const animRef = useRef<number>(0)
   const dustRef = useRef<Dust[]>([])
@@ -260,6 +261,8 @@ export default function TypoAnimator({ text, style, onComplete, isPlaying }: Typ
   const mountedRef = useRef(true)
   const onCompleteRef = useRef(onComplete)
   onCompleteRef.current = onComplete
+  const onAnimDoneRef = useRef(onAnimDone)
+  onAnimDoneRef.current = onAnimDone
 
   // Canvas sizing
   useEffect(() => {
@@ -365,6 +368,8 @@ export default function TypoAnimator({ text, style, onComplete, isPlaying }: Typ
 
       if (done && !doneRef.current) {
         doneRef.current = true
+        // Notify parent animation is done (buttons can enable)
+        onAnimDoneRef.current?.()
         // Hold final frame for 3s on recording, then stop recorder
         // onComplete is called from recorder.onstop to ensure blob is ready
         setTimeout(() => {

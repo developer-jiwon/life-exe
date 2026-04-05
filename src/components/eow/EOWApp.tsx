@@ -48,10 +48,13 @@ export default function EOWApp() {
     ? `${typeof window !== 'undefined' ? window.location.origin : ''}/eow?t=${encodeURIComponent(playingText)}`
     : ''
 
+  const handleAnimDone = useCallback(() => {
+    setPhase('done')
+  }, [])
+
   const handleComplete = useCallback((blob: Blob | null) => {
     reelsBlobRef.current = blob
     setReelsReady(true)
-    setPhase('done')
     // 유저가 이미 Share to Reels를 눌렀으면 바로 공유
     if (blob && sharingRef.current) {
       sharingRef.current = false
@@ -276,6 +279,7 @@ export default function EOWApp() {
           text={playingText}
           style="typewriter"
           isPlaying={phase === 'playing'}
+          onAnimDone={handleAnimDone}
           onComplete={handleComplete}
         />
 
