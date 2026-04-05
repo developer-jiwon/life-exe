@@ -207,7 +207,14 @@ export default function EOWApp() {
   }, [playingText])
 
   const resetToIdle = useCallback(() => {
-    setPhase('idle'); setText(''); setPlayingText(''); reelsBlobRef.current = null
+    setPhase('idle')
+    setText('')
+    setPlayingText('')
+    reelsBlobRef.current = null
+    sharingRef.current = false
+    setSharing(false)
+    setReelsReady(false)
+    setPlayKey(prev => prev + 1)
     window.history.replaceState(null, '', '/eow')
   }, [])
 
