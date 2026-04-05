@@ -38,7 +38,7 @@ function createDust(w: number, h: number, n: number): Dust[] {
     x: Math.random() * w, y: Math.random() * h,
     s: (0.3 + Math.random() * 1.2) * scale,
     o: 0.05 + Math.random() * 0.15,
-    sp: (0.05 + Math.random() * 0.2) * scale,
+    sp: (0.3 + Math.random() * 0.8) * scale,
     d: (Math.random() - 0.5) * 0.15 * scale,
   }))
 }
