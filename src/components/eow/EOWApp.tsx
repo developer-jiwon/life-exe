@@ -169,7 +169,7 @@ export default function EOWApp() {
         <div className="w-full max-w-[480px]">
           <div className="text-center mb-10">
             <h1 className="text-[26px] tracking-[0.3em] uppercase text-[#C0C0C0] mb-2.5" style={fontJ}>End Of What</h1>
-            <p className="text-[11px] text-[#888]">마지막으로 남길 한 문장</p>
+            <p className="text-[11px] text-[#888]">오늘의 한 줄을 남겨보세요</p>
           </div>
 
           <div className="relative mb-8">

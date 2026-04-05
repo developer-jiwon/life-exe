@@ -27,7 +27,7 @@ export default function TicketNotice({ onAccept }: TicketNoticeProps) {
         </div>
         <div className="px-7 pt-8 pb-4">
           <p className="text-[10px] tracking-[0.25em] uppercase text-[#999] mb-5" style={{ fontFamily: 'var(--font-jakarta)' }}>End Of What</p>
-          <p className="text-[15px] font-semibold leading-relaxed mb-3">마지막 한 문장,<br />여기에 남겨두세요.</p>
+          <p className="text-[15px] font-semibold leading-relaxed mb-3">오늘의 한 줄,<br />여기 남겨두세요.</p>
           <p className="text-[12px] text-[#777] leading-relaxed mb-2">당신의 문장은 오직 이 기기 안에만 머물러요.<br />어디로도 보내지 않아요.</p>
           <p className="text-[11px] text-[#999] leading-relaxed mb-2">원한다면, 링크 하나로 누군가에게 건네줄 수 있어요.</p>
           <p className="text-[11px] text-[#999] leading-relaxed mb-5">인스타그램 릴스로도 공유할 수 있어요.</p>
