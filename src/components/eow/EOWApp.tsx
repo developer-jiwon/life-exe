@@ -165,7 +165,7 @@ export default function EOWApp() {
         />
 
         {/* pill 위 투명 링크 — @jiwonnnnieee */}
-        <a href="https://www.threads.com/@jiwonnnnieee" target="_blank" rel="noopener noreferrer" className="fixed z-[60] top-[18%] left-[10%] w-[35%] h-[4%] cursor-pointer" />
+        <a href="https://www.threads.com/@jiwonnnnieee" target="_blank" rel="noopener noreferrer" className="fixed z-[60] top-[5%] right-[3%] w-[40%] h-[5%] cursor-pointer" />
 
         <div className="fixed inset-0 z-[60] flex flex-col items-center justify-end pb-14 pointer-events-none">
           <div className="flex flex-col items-center gap-3 w-full max-w-[320px] px-4 pointer-events-auto">
