@@ -203,7 +203,7 @@ function renderFrame(ctx: CanvasRenderingContext2D, w: number, h: number, text: 
   // Watermark — "End Of What" title + two bookmarks
   if (t > 0.5) {
     // Title watermark — matches main page layout, positioned below bookmarks
-    const titleFade = Math.min(1, (t - 0.5) * 0.5)
+    const titleFade = Math.min(1, (t - 0.5) * 1.0)
     const titleFs = isReels ? Math.round(w * 0.045) : Math.round(Math.min(w, h) * 0.045)
     const subFs = isReels ? Math.round(w * 0.024) : Math.round(Math.min(w, h) * 0.024)
     const titleY = Math.round(h * 0.28)
@@ -231,8 +231,8 @@ function renderFrame(ctx: CanvasRenderingContext2D, w: number, h: number, text: 
     const notch = Math.round(fs * 0.45)
 
     // ─── Bookmark 1: @jiwonnnnieee ───
-    const fadeIn1 = Math.min(1, (t - 1.0) * 0.6)
-    const slide1 = easeOutCubic(Math.min(1, (t - 1.0) * 0.8))
+    const fadeIn1 = Math.min(1, (t - 1.0) * 1.2)
+    const slide1 = easeOutCubic(Math.min(1, (t - 1.0) * 1.0))
 
     ctx.save()
     ctx.font = getSansFont(500, fs)
@@ -263,7 +263,7 @@ function renderFrame(ctx: CanvasRenderingContext2D, w: number, h: number, text: 
     ctx.restore()
 
     // ─── Bookmark 2: URL (delayed) ───
-    const fadeIn2 = Math.min(1, Math.max(0, t - 1.4) * 0.6)
+    const fadeIn2 = Math.min(1, Math.max(0, t - 1.3) * 1.2)
     const slide2 = easeOutCubic(Math.min(1, Math.max(0, t - 1.4) * 0.8))
 
     ctx.save()
@@ -422,7 +422,7 @@ export default function TypoAnimator({ text, style, onComplete, isPlaying }: Typ
           recStopped = true
           if (recorder && recorder.state !== 'inactive') recorder.stop()
           setTimeout(() => onCompleteRef.current?.(blobRef.current), 100)
-        }, 600)
+        }, 3000)
       }
 
       // Always keep rendering so canvas never goes blank
