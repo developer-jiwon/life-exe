@@ -39,7 +39,6 @@ export default function TicketNotice({ onAccept }: TicketNoticeProps) {
             style={{ fontFamily: 'var(--font-jakarta)' }}
           >
             @jiwonnnnieee
-            <span className="text-[#F5F5F0]">의 세상</span>
           </a>
         </div>
         <div className="mx-4 border-t border-dashed border-[#D0D0C8]" />
