@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { getSavedSentences } from '@/lib/eow-storage'
+import { getSavedSentences, deleteSentence } from '@/lib/eow-storage'
 
 const DEFAULT_SENTENCES = [
   '결국 사랑이었다',
@@ -28,7 +28,6 @@ const DEFAULT_SENTENCES = [
   'Tell them I loved it',
   '늦지 않았으면 좋겠다',
   'Not bad for a human',
-  // ─── 추가 ───
   '한 번만 더 안아줘',
   'This was fun',
   '후회는 없다 진짜로',
@@ -88,10 +87,12 @@ interface SentenceWallProps {
 
 export default function SentenceWall({ onSentenceClick, refreshKey }: SentenceWallProps) {
   const [sentences, setSentences] = useState<string[]>(DEFAULT_SENTENCES)
+  const [userSentences, setUserSentences] = useState<Set<string>>(new Set())
 
   useEffect(() => {
     const saved = getSavedSentences()
     const savedTexts = saved.map(s => s.text)
+    setUserSentences(new Set(savedTexts))
     const merged = [
       ...savedTexts,
       ...DEFAULT_SENTENCES.filter(d => !savedTexts.includes(d)),
@@ -99,64 +100,86 @@ export default function SentenceWall({ onSentenceClick, refreshKey }: SentenceWa
     setSentences(merged)
   }, [refreshKey])
 
+  function handleDelete(text: string) {
+    deleteSentence(text)
+    setUserSentences(prev => { const n = new Set(prev); n.delete(text); return n })
+    setSentences(prev => prev.filter(s => s !== text))
+  }
+
   return (
     <div className="w-full px-4">
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-        {sentences.map((sentence, i) => (
-          <TicketCard
-            key={`${sentence}-${i}`}
-            text={sentence}
-            isMine={!DEFAULT_SENTENCES.includes(sentence)}
-            onClick={() => onSentenceClick?.(sentence)}
-          />
-        ))}
+      <div className="grid gap-3" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))' }}>
+        {sentences.map((sentence, i) => {
+          const isMine = userSentences.has(sentence)
+          return (
+            <TicketCard
+              key={`${sentence}-${i}`}
+              text={sentence}
+              isMine={isMine}
+              onClick={() => onSentenceClick?.(sentence)}
+              onDelete={isMine ? () => handleDelete(sentence) : undefined}
+            />
+          )
+        })}
       </div>
     </div>
   )
 }
 
-function TicketCard({ text, isMine, onClick }: { text: string; isMine: boolean; onClick?: () => void }) {
+function TicketCard({ text, isMine, onClick, onDelete }: { text: string; isMine: boolean; onClick?: () => void; onDelete?: () => void }) {
   return (
-    <button
-      onClick={onClick}
-      className="relative w-full text-left group active:scale-[0.97] transition-transform duration-150"
-    >
-      <div className={`
-        ${isMine ? 'bg-[#1E1E1C] border-[#3A3A38]' : 'bg-[#1E1E1C] border-[#2A2A28]'}
-        border px-4 py-4 group-hover:bg-[#262624] transition-colors duration-200
-      `}>
-        <div className="absolute top-0 left-2 right-2 flex justify-between">
-          {Array.from({ length: 8 }).map((_, i) => (
-            <div key={i} className="w-[3px] h-[3px] rounded-full bg-[#111] -mt-[1.5px]" />
-          ))}
-        </div>
+    <div className="relative group">
+      <button
+        onClick={onClick}
+        className="relative w-full text-left active:scale-[0.97] transition-transform duration-150"
+      >
+        <div className={`
+          ${isMine ? 'bg-[#1E1E1C] border-[#3A3A38]' : 'bg-[#1E1E1C] border-[#2A2A28]'}
+          border px-4 py-4 group-hover:bg-[#262624] transition-colors duration-200
+        `}>
+          <div className="absolute top-0 left-2 right-2 flex justify-between">
+            {Array.from({ length: 8 }).map((_, i) => (
+              <div key={i} className="w-[3px] h-[3px] rounded-full bg-[#111] -mt-[1.5px]" />
+            ))}
+          </div>
 
-        <p
-          className={`
-            text-[#D0D0C8] text-[12px] leading-relaxed font-light break-keep
-            group-hover:text-[#F5F5F0] transition-colors duration-200
-            ${text.length > 15 ? 'text-[11px]' : ''}
-          `}
-          style={{ fontFamily: 'var(--font-noto-serif), var(--font-cormorant), serif' }}
+          <p
+            className={`
+              text-[#D0D0C8] text-[12px] leading-relaxed font-light break-keep
+              group-hover:text-[#F5F5F0] transition-colors duration-200
+              ${text.length > 15 ? 'text-[11px]' : ''}
+            `}
+            style={{ fontFamily: 'var(--font-noto-serif), var(--font-cormorant), serif' }}
+          >
+            {text}
+          </p>
+
+          <div className="mt-3 flex items-center justify-between">
+            <span className="text-[8px] text-[#555] tracking-widest uppercase" style={{ fontFamily: 'var(--font-jakarta)' }}>
+              {isMine ? 'YOU' : 'EOW'}
+            </span>
+            <span className="text-[8px] text-[#F5F5F0]/0 group-hover:text-[#F5F5F0]/40 transition-all duration-200 tracking-wider" style={{ fontFamily: 'var(--font-jakarta)' }}>
+              play ▶
+            </span>
+          </div>
+
+          <div className="absolute bottom-0 left-2 right-2 flex justify-between">
+            {Array.from({ length: 8 }).map((_, i) => (
+              <div key={i} className="w-[3px] h-[3px] rounded-full bg-[#111] -mb-[1.5px]" />
+            ))}
+          </div>
+        </div>
+      </button>
+
+      {/* Delete button for user sentences */}
+      {onDelete && (
+        <button
+          onClick={(e) => { e.stopPropagation(); onDelete() }}
+          className="absolute top-2 right-2 w-5 h-5 rounded-full bg-[#333] text-[#888] text-[10px] flex items-center justify-center opacity-0 group-hover:opacity-100 hover:bg-[#555] hover:text-[#FFF] transition-all z-10"
         >
-          {text}
-        </p>
-
-        <div className="mt-3 flex items-center justify-between">
-          <span className="text-[8px] text-[#555] tracking-widest uppercase" style={{ fontFamily: 'var(--font-jakarta)' }}>
-            {isMine ? 'YOU' : 'EOW'}
-          </span>
-          <span className="text-[8px] text-[#F5F5F0]/0 group-hover:text-[#F5F5F0]/40 transition-all duration-200 tracking-wider" style={{ fontFamily: 'var(--font-jakarta)' }}>
-            play ▶
-          </span>
-        </div>
-
-        <div className="absolute bottom-0 left-2 right-2 flex justify-between">
-          {Array.from({ length: 8 }).map((_, i) => (
-            <div key={i} className="w-[3px] h-[3px] rounded-full bg-[#111] -mb-[1.5px]" />
-          ))}
-        </div>
-      </div>
-    </button>
+          ✕
+        </button>
+      )}
+    </div>
   )
 }

@@ -24,3 +24,8 @@ export function saveSentence(text: string) {
   if (saved.length > 50) saved.pop()
   localStorage.setItem(STORAGE_KEY, JSON.stringify(saved))
 }
+
+export function deleteSentence(text: string) {
+  const saved = getSavedSentences().filter(s => s.text !== text)
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(saved))
+}
