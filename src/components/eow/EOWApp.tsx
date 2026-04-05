@@ -15,6 +15,7 @@ export default function EOWApp() {
   const [copied, setCopied] = useState(false)
   const [playKey, setPlayKey] = useState(0)
   const reelsBlobRef = useRef<Blob | null>(null)
+  const sharingRef = useRef(false)
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search)
@@ -50,22 +51,25 @@ export default function EOWApp() {
     reelsBlobRef.current = blob
     setReelsReady(true)
     setPhase('done')
+    // 유저가 이미 Share to Reels를 눌렀으면 바로 공유
+    if (blob && sharingRef.current) {
+      sharingRef.current = false
+      setSharing(false)
+      const ext = blob.type.includes('mp4') ? 'mp4' : 'webm'
+      const file = new File([blob], `eow.${ext}`, { type: blob.type })
+      if (navigator.share && navigator.canShare?.({ files: [file] })) {
+        navigator.share({ files: [file], title: 'End Of What' }).catch(() => {})
+      } else {
+        const url = URL.createObjectURL(blob)
+        const a = document.createElement('a'); a.href = url; a.download = `eow.${ext}`; a.click()
+        setTimeout(() => URL.revokeObjectURL(url), 3000)
+      }
+    }
   }, [])
 
-  const shareToReels = useCallback(() => {
-    const blob = reelsBlobRef.current
-    if (!blob) {
-      // Fallback: blob이 없으면 (녹화 미지원) 텍스트 공유
-      if (navigator.share) {
-        navigator.share({
-          title: 'End Of What',
-          text: `"${playingText}"\n\n@jiwonnnnieee\nso.now-then.dev/eow`,
-          url: `${window.location.origin}/eow?t=${encodeURIComponent(playingText)}`,
-        }).catch(() => {})
-      }
-      return
-    }
+  const [sharing, setSharing] = useState(false)
 
+  const doShare = useCallback((blob: Blob) => {
     const ext = blob.type.includes('mp4') ? 'mp4' : 'webm'
     const file = new File([blob], `eow.${ext}`, { type: blob.type })
 
@@ -80,7 +84,19 @@ export default function EOWApp() {
       const a = document.createElement('a'); a.href = url; a.download = `eow.${ext}`; a.click()
       setTimeout(() => URL.revokeObjectURL(url), 3000)
     }
+    setSharing(false)
   }, [playingText])
+
+  const shareToReels = useCallback(() => {
+    const blob = reelsBlobRef.current
+    if (blob) {
+      doShare(blob)
+      return
+    }
+    // Blob 아직 안 됨 — 준비될 때까지 대기
+    sharingRef.current = true
+    setSharing(true)
+  }, [doShare])
 
   const resetToIdle = useCallback(() => {
     setPhase('idle'); setText(''); setPlayingText(''); reelsBlobRef.current = null
@@ -152,10 +168,10 @@ export default function EOWApp() {
           <div className="flex flex-col items-center gap-3 w-full max-w-[320px] px-4 pointer-events-auto">
             <button
               onClick={shareToReels}
-              className="w-full py-3 rounded-full text-[10px] tracking-widest uppercase transition-all active:scale-[0.98] font-medium bg-[#F5F5F0]/20 text-[#F5F5F0]/40 hover:bg-[#F5F5F0] hover:text-[#0A0A0A]"
+              className={`w-full py-3 rounded-full text-[10px] tracking-widest uppercase transition-all active:scale-[0.98] font-medium ${sharing ? 'bg-[#F5F5F0]/10 text-[#F5F5F0]/30' : 'bg-[#F5F5F0]/20 text-[#F5F5F0]/40 hover:bg-[#F5F5F0] hover:text-[#0A0A0A]'}`}
               style={fontJ}
             >
-              Share to Reels
+              {sharing ? 'Preparing...' : 'Share to Reels'}
             </button>
             <div className="flex gap-3 w-full">
               <button onClick={() => play()} className="flex-1 py-2.5 rounded-full text-[10px] tracking-widest uppercase border border-[#F5F5F0]/20 text-[#F5F5F0]/40 hover:border-[#F5F5F0]/60 hover:text-[#F5F5F0] transition-all" style={fontJ}>Replay</button>
