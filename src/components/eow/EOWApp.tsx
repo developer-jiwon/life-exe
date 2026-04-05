@@ -193,7 +193,7 @@ export default function EOWApp() {
               placeholder="여기에 쓰세요"
               maxLength={100}
               rows={3}
-              autoFocus
+              autoFocus={typeof window !== 'undefined' && !('ontouchstart' in window)}
               className="eow-serif w-full bg-transparent text-[#F5F5F0] text-center text-[22px] font-medium leading-relaxed placeholder:text-[#2A2A2A] border-none outline-none resize-none caret-[#555]"
             />
             <div className="absolute -bottom-4 right-0 text-[9px] text-[#333]" style={fontJ}>{text.length}/100</div>
