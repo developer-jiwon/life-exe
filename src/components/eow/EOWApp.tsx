@@ -144,7 +144,7 @@ export default function EOWApp() {
             )}
           </div>
           <div className="mt-8 flex justify-center gap-6">
-            <button onClick={() => play()} className="text-[10px] text-[#555] hover:text-[#999] tracking-wider uppercase" style={fontJ}>Replay</button>
+            <button onClick={() => play(playingText)} className="text-[10px] text-[#555] hover:text-[#999] tracking-wider uppercase" style={fontJ}>Replay</button>
             <button onClick={resetToIdle} className="text-[10px] text-[#555] hover:text-[#999] tracking-wider uppercase" style={fontJ}>New</button>
           </div>
         </div>
