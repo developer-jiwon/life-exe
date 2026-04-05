@@ -3,9 +3,17 @@
 let audioCtx: AudioContext | null = null
 
 function getCtx(): AudioContext {
-  if (!audioCtx) audioCtx = new AudioContext()
+  if (!audioCtx) {
+    const AC = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext
+    audioCtx = new AC()
+  }
   if (audioCtx.state === 'suspended') audioCtx.resume()
   return audioCtx
+}
+
+// Call on first user interaction to unlock audio on mobile
+export function unlockAudio() {
+  try { getCtx() } catch {}
 }
 
 // ─── TYPING SOUND ───

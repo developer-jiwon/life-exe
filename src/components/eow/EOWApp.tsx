@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback, useRef } from 'react'
 import TypoAnimator from './TypoAnimator'
 import TicketNotice from './TicketNotice'
 import SentenceWall from './SentenceWall'
-import { playTypeClick } from '@/lib/eow-sound'
+import { playTypeClick, unlockAudio } from '@/lib/eow-sound'
 import { saveSentence } from '@/lib/eow-storage'
 
 export default function EOWApp() {
@@ -93,7 +93,7 @@ export default function EOWApp() {
   if (phase === 'notice') {
     return (
       <div className="fixed inset-0 bg-[#0A0A0A]">
-        <TicketNotice onAccept={() => setPhase('idle')} />
+        <TicketNotice onAccept={() => { unlockAudio(); setPhase('idle') }} />
       </div>
     )
   }
@@ -188,6 +188,7 @@ export default function EOWApp() {
               value={text}
               onChange={(e) => { setText(e.target.value.slice(0, 100)); playTypeClick() }}
               onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey && !('ontouchstart' in window)) { e.preventDefault(); play() } }}
+              onFocus={() => { setTimeout(() => window.scrollTo(0, 0), 300) }}
               placeholder="여기에 쓰세요"
               maxLength={100}
               rows={3}

@@ -373,7 +373,7 @@ export default function TypoAnimator({ text, style, onComplete, isPlaying }: Typ
       const mimeType = MediaRecorder.isTypeSupported('video/mp4') ? 'video/mp4'
         : MediaRecorder.isTypeSupported('video/webm;codecs=vp9') ? 'video/webm;codecs=vp9'
         : 'video/webm'
-      recorder = new MediaRecorder(stream, { mimeType, videoBitsPerSecond: 8_000_000 })
+      recorder = new MediaRecorder(stream, { mimeType, videoBitsPerSecond: 15_000_000 })
       recorder.ondataavailable = (e) => { if (e.data.size > 0) chunksRef.current.push(e.data) }
       recorder.onstop = () => {
         const blob = new Blob(chunksRef.current, { type: mimeType })
