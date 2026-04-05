@@ -202,21 +202,24 @@ function renderFrame(ctx: CanvasRenderingContext2D, w: number, h: number, text: 
 
   // Watermark — "End Of What" title + two bookmarks
   if (t > 0.5) {
-    // Title watermark — subtle, top center
+    // Title watermark — matches main page layout, positioned below bookmarks
     const titleFade = Math.min(1, (t - 0.5) * 0.4)
-    const titleFs = isReels ? Math.round(w * 0.02) : Math.round(Math.min(w, h) * 0.02)
-    const subFs = Math.round(titleFs * 0.65)
+    const titleFs = isReels ? Math.round(w * 0.038) : Math.round(Math.min(w, h) * 0.035)
+    const subFs = isReels ? Math.round(w * 0.018) : Math.round(Math.min(w, h) * 0.018)
+    const titleY = Math.round(h * 0.30)
     ctx.save()
     ctx.textAlign = 'center'
     ctx.fillStyle = '#F5F5F0'
-    // End Of What
-    ctx.globalAlpha = titleFade * 0.25
-    ctx.font = getSansFont(500, titleFs)
-    ctx.fillText('End Of What', w / 2, Math.round(h * 0.045))
+    // End Of What — large tracking like main page
+    ctx.globalAlpha = titleFade * 0.2
+    ctx.font = getSansFont(400, titleFs)
+    ctx.letterSpacing = `${titleFs * 0.3}px`
+    ctx.fillText('E N D  O F  W H A T', w / 2, titleY)
     // 오늘의 한 줄을 남겨보세요
-    ctx.globalAlpha = titleFade * 0.18
+    ctx.globalAlpha = titleFade * 0.15
     ctx.font = getSansFont(400, subFs)
-    ctx.fillText('오늘의 한 줄을 남겨보세요', w / 2, Math.round(h * 0.045) + titleFs * 1.4)
+    ctx.letterSpacing = '0px'
+    ctx.fillText('오늘의 한 줄을 남겨보세요', w / 2, titleY + titleFs * 1.2)
     ctx.restore()
     ctx.textAlign = 'start'; ctx.globalAlpha = 1
   }
