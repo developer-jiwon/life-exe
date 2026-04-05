@@ -231,7 +231,7 @@ function renderFrame(ctx: CanvasRenderingContext2D, w: number, h: number, text: 
   // Pills below tagline — @jiwonnnnieee + URL
   if (t > 1.0) {
     const pillFade = Math.min(1, (t - 1.0) * 1.0)
-    const pillFs = isReels ? Math.round(w * 0.02) : Math.round(Math.min(w, h) * 0.02)
+    const pillFs = isReels ? Math.round(w * 0.016) : Math.round(Math.min(w, h) * 0.016)
     const pillPadX = Math.round(pillFs * 1.3)
     const pillPadY = Math.round(pillFs * 0.6)
     const pillGap = Math.round(pillFs * 0.8)
