@@ -112,22 +112,36 @@ export default function EOWApp() {
     const ctx = canvas.getContext('2d')
     if (!ctx) return
 
-    // Dark background
-    ctx.fillStyle = '#0A0A0A'
+    // Entire canvas IS the ticket card
+    ctx.fillStyle = '#F5F5F0'
     ctx.fillRect(0, 0, w, h)
 
-    // Ticket card — centered, auto height
-    const cardW = Math.round(w * 0.82)
-    const cardX = (w - cardW) / 2
-    const pad = Math.round(cardW * 0.08)
+    const pad = Math.round(w * 0.1)
+    const labelFs = Math.round(w * 0.03)
+    const quoteFs = Math.round(w * 0.07)
+    const footerFs = Math.round(w * 0.025)
 
-    // Measure text to calculate card height
-    const labelFs = Math.round(cardW * 0.028)
-    const quoteFs = Math.round(cardW * 0.065)
-    const footerFs = Math.round(cardW * 0.024)
+    // Perforated top edge
+    const dotR = Math.round(w * 0.004)
+    const dotGap = Math.round(w / 20)
+    ctx.fillStyle = '#D0D0C8'
+    for (let x = dotGap; x < w; x += dotGap) {
+      ctx.beginPath(); ctx.arc(x, Math.round(h * 0.03), dotR, 0, Math.PI * 2); ctx.fill()
+    }
+    // Perforated bottom edge
+    for (let x = dotGap; x < w; x += dotGap) {
+      ctx.beginPath(); ctx.arc(x, Math.round(h * 0.97), dotR, 0, Math.PI * 2); ctx.fill()
+    }
 
+    // "END OF WHAT" label
+    ctx.fillStyle = '#999'
+    ctx.font = `400 ${labelFs}px "Plus Jakarta Sans", sans-serif`
+    ctx.textAlign = 'center'
+    ctx.fillText('END OF WHAT', w / 2, Math.round(h * 0.15))
+
+    // Quote text — centered
     ctx.font = `500 ${quoteFs}px "Noto Serif KR", Georgia, serif`
-    const maxTextW = cardW - pad * 2
+    const maxTextW = w - pad * 2
     const chars = playingText.split('')
     let lines: string[] = []; let line = ''
     for (const ch of chars) {
@@ -137,62 +151,36 @@ export default function EOWApp() {
     if (line) lines.push(line)
 
     const lineH = quoteFs * 1.5
-    const textBlockH = lines.length * lineH
-    const cardH = pad + labelFs + pad * 1.5 + textBlockH + pad * 2 + footerFs + pad
-    const cardY = (h - cardH) / 2
+    const totalTextH = lines.length * lineH
+    const textY = (h - totalTextH) / 2
 
-    // Ticket background
-    ctx.fillStyle = '#F5F5F0'
-    ctx.fillRect(cardX, cardY, cardW, cardH)
-
-    // Perforated top edge
-    const dotR = Math.round(cardW * 0.005)
-    const dotGap = Math.round(cardW / 18)
     ctx.fillStyle = '#0A0A0A'
-    for (let x = cardX + dotGap; x < cardX + cardW; x += dotGap) {
-      ctx.beginPath(); ctx.arc(x, cardY, dotR, 0, Math.PI * 2); ctx.fill()
-    }
-    // Perforated bottom edge
-    for (let x = cardX + dotGap; x < cardX + cardW; x += dotGap) {
-      ctx.beginPath(); ctx.arc(x, cardY + cardH, dotR, 0, Math.PI * 2); ctx.fill()
-    }
-
-    // "END OF WHAT" label — centered
-    ctx.fillStyle = '#999'
-    ctx.font = `400 ${labelFs}px "Plus Jakarta Sans", sans-serif`
     ctx.textAlign = 'center'
-    ctx.fillText('END OF WHAT', w / 2, cardY + pad + labelFs)
-
-    // Quote text — centered
-    ctx.fillStyle = '#0A0A0A'
-    ctx.font = `500 ${quoteFs}px "Noto Serif KR", Georgia, serif`
-    const textStartY = cardY + pad + labelFs + pad * 1.5
-
     for (let i = 0; i < lines.length; i++) {
-      ctx.fillText(lines[i], w / 2, textStartY + quoteFs * 0.9 + i * lineH)
+      ctx.fillText(lines[i], w / 2, textY + quoteFs * 0.9 + i * lineH)
     }
 
     // Dashed line
-    const dashY = textStartY + textBlockH + pad
+    const dashY = Math.round(h * 0.82)
     ctx.strokeStyle = '#D0D0C8'
     ctx.lineWidth = 2
     ctx.setLineDash([8, 5])
     ctx.beginPath()
-    ctx.moveTo(cardX + pad * 0.6, dashY)
-    ctx.lineTo(cardX + cardW - pad * 0.6, dashY)
+    ctx.moveTo(pad, dashY)
+    ctx.lineTo(w - pad, dashY)
     ctx.stroke()
     ctx.setLineDash([])
 
-    // Footer: URL (left) + @handle (right)
-    const footerY = dashY + pad * 0.8 + footerFs
+    // Footer
+    const footerY = Math.round(h * 0.88)
     ctx.font = `400 ${footerFs}px "Plus Jakarta Sans", sans-serif`
     ctx.textAlign = 'left'
     ctx.fillStyle = '#888'
-    ctx.fillText('so.now-then.dev/eow', cardX + pad, footerY)
+    ctx.fillText('so.now-then.dev/eow', pad, footerY)
     ctx.textAlign = 'right'
     ctx.fillStyle = '#0A0A0A'
     ctx.font = `500 ${footerFs}px "Plus Jakarta Sans", sans-serif`
-    ctx.fillText('@jiwonnnnieee', cardX + cardW - pad, footerY)
+    ctx.fillText('@jiwonnnnieee', w - pad, footerY)
 
     // Export
     canvas.toBlob((blob) => {
