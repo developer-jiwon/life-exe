@@ -393,10 +393,10 @@ export default function TypoAnimator({ text, style, onComplete, isPlaying }: Typ
 
     // Setup background 9:16 recording
     const recCanvas = document.createElement('canvas')
-    recCanvas.width = 1080; recCanvas.height = 1920
+    recCanvas.width = 1440; recCanvas.height = 2560
     recCanvasRef.current = recCanvas
     const recCtx = recCanvas.getContext('2d')
-    recDustRef.current = createDust(1080, 1920, 80)
+    recDustRef.current = createDust(1440, 2560, 80)
     chunksRef.current = []
 
     let recorder: MediaRecorder | null = null
@@ -405,7 +405,7 @@ export default function TypoAnimator({ text, style, onComplete, isPlaying }: Typ
       const mimeType = MediaRecorder.isTypeSupported('video/mp4') ? 'video/mp4'
         : MediaRecorder.isTypeSupported('video/webm;codecs=vp9') ? 'video/webm;codecs=vp9'
         : 'video/webm'
-      recorder = new MediaRecorder(stream, { mimeType, videoBitsPerSecond: 15_000_000 })
+      recorder = new MediaRecorder(stream, { mimeType, videoBitsPerSecond: 20_000_000 })
       recorder.ondataavailable = (e) => { if (e.data.size > 0) chunksRef.current.push(e.data) }
       recorder.onstop = () => {
         const blob = new Blob(chunksRef.current, { type: mimeType })
@@ -446,8 +446,8 @@ export default function TypoAnimator({ text, style, onComplete, isPlaying }: Typ
       // Render recording canvas in parallel (only while not done)
       if (recCtx && !recStopped) {
         recCtx.setTransform(1, 0, 0, 1, 0, 0)
-        tickDust(recDustRef.current, 1080, 1920)
-        renderFrame(recCtx, 1080, 1920, text, style, t, recDustRef.current, true)
+        tickDust(recDustRef.current, 1440, 2560)
+        renderFrame(recCtx, 1440, 2560, text, style, t, recDustRef.current, true)
       }
 
       if (done && !doneRef.current) {
