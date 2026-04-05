@@ -168,10 +168,11 @@ export default function EOWApp() {
           <div className="flex flex-col items-center gap-3 w-full max-w-[320px] px-4 pointer-events-auto">
             <button
               onClick={shareToReels}
-              className={`w-full py-3 rounded-full text-[10px] tracking-widest uppercase transition-all active:scale-[0.98] font-medium ${sharing ? 'bg-[#F5F5F0]/10 text-[#F5F5F0]/30' : 'bg-[#F5F5F0]/20 text-[#F5F5F0]/40 hover:bg-[#F5F5F0] hover:text-[#0A0A0A]'}`}
+              disabled={sharing}
+              className={`w-full py-3 rounded-full text-[10px] tracking-widest uppercase transition-all active:scale-[0.98] font-medium ${sharing ? 'bg-[#F5F5F0] text-[#0A0A0A] animate-pulse' : 'bg-[#F5F5F0]/20 text-[#F5F5F0]/40 hover:bg-[#F5F5F0] hover:text-[#0A0A0A]'}`}
               style={fontJ}
             >
-              {sharing ? 'Preparing...' : 'Share to Reels'}
+              {sharing ? 'Preparing — will share automatically' : 'Share to Reels'}
             </button>
             <div className="flex gap-3 w-full">
               <button onClick={() => play()} className="flex-1 py-2.5 rounded-full text-[10px] tracking-widest uppercase border border-[#F5F5F0]/20 text-[#F5F5F0]/40 hover:border-[#F5F5F0]/60 hover:text-[#F5F5F0] transition-all" style={fontJ}>Replay</button>
