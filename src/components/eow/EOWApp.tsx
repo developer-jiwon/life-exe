@@ -6,6 +6,7 @@ import TicketNotice from './TicketNotice'
 import SentenceWall from './SentenceWall'
 import { playTypeClick, unlockAudio } from '@/lib/eow-sound'
 import { saveSentence } from '@/lib/eow-storage'
+import html2canvas from 'html2canvas'
 
 export default function EOWApp() {
   const [text, setText] = useState('')
@@ -98,6 +99,29 @@ export default function EOWApp() {
     setSharing(true)
   }, [doShare])
 
+  const ticketRef = useRef<HTMLDivElement>(null)
+
+  const shareCard = useCallback(async () => {
+    if (!ticketRef.current) return
+    try {
+      const canvas = await html2canvas(ticketRef.current, {
+        backgroundColor: '#0A0A0A',
+        scale: 3,
+      })
+      canvas.toBlob((blob) => {
+        if (!blob) return
+        const file = new File([blob], 'eow-card.png', { type: 'image/png' })
+        if (navigator.share && navigator.canShare?.({ files: [file] })) {
+          navigator.share({ files: [file], title: 'End Of What' }).catch(() => {})
+        } else {
+          const url = URL.createObjectURL(blob)
+          const a = document.createElement('a'); a.href = url; a.download = 'eow-card.png'; a.click()
+          setTimeout(() => URL.revokeObjectURL(url), 3000)
+        }
+      }, 'image/png')
+    } catch {}
+  }, [])
+
   const resetToIdle = useCallback(() => {
     setPhase('idle'); setText(''); setPlayingText(''); reelsBlobRef.current = null
     window.history.replaceState(null, '', '/eow')
@@ -120,7 +144,7 @@ export default function EOWApp() {
       <div className="fixed inset-0 bg-[#0A0A0A] flex flex-col items-center justify-center px-6">
         <button onClick={() => setPhase('done')} className="absolute top-5 right-5 text-[#555] hover:text-[#999] text-[18px]">✕</button>
         <div className="w-full max-w-[400px] animate-fade-in">
-          <div className="relative bg-[#F5F5F0] mx-auto">
+          <div ref={ticketRef} className="relative bg-[#F5F5F0] mx-auto" style={{ padding: '1px 0' }}>
             <div className="absolute -top-[6px] left-0 right-0 h-[6px] overflow-hidden">
               <svg width="100%" height="6" preserveAspectRatio="none" viewBox="0 0 400 6"><path d="M0,6 L0,3 Q10,0 20,3 Q30,6 40,3 Q50,0 60,3 Q70,6 80,3 Q90,0 100,3 Q110,6 120,3 Q130,0 140,3 Q150,6 160,3 Q170,0 180,3 Q190,6 200,3 Q210,0 220,3 Q230,6 240,3 Q250,0 260,3 Q270,6 280,3 Q290,0 300,3 Q310,6 320,3 Q330,0 340,3 Q350,6 360,3 Q370,0 380,3 Q390,6 400,3 L400,6 Z" fill="#F5F5F0" /></svg>
             </div>
@@ -130,18 +154,16 @@ export default function EOWApp() {
             </div>
             <div className="mx-5 border-t border-dashed border-[#D0D0C8]" />
             <div className="px-8 py-4 flex items-center justify-between">
-              <span className="text-[9px] text-[#BBB] tracking-wider" style={fontJ}>so.now-then.dev/eow</span>
-              <span className="text-[9px] text-[#BBB]" style={fontJ}>@jiwonnnnieee</span>
+              <span className="text-[9px] text-[#888] tracking-wider" style={fontJ}>so.now-then.dev/eow</span>
+              <span className="text-[9px] text-[#0A0A0A] font-medium" style={fontJ}>@jiwonnnnieee</span>
             </div>
             <div className="absolute -bottom-[6px] left-0 right-0 h-[6px] overflow-hidden">
               <svg width="100%" height="6" preserveAspectRatio="none" viewBox="0 0 400 6"><path d="M0,0 L0,3 Q10,6 20,3 Q30,0 40,3 Q50,6 60,3 Q70,0 80,3 Q90,6 100,3 Q110,0 120,3 Q130,6 140,3 Q150,0 160,3 Q170,6 180,3 Q190,0 200,3 Q210,6 220,3 Q230,0 240,3 Q250,6 260,3 Q270,0 280,3 Q290,6 300,3 Q310,0 320,3 Q330,6 340,3 Q350,0 360,3 Q370,6 380,3 Q390,0 400,3 L400,0 Z" fill="#F5F5F0" /></svg>
             </div>
           </div>
           <div className="mt-10 flex flex-col gap-3">
-            <button onClick={() => { navigator.clipboard.writeText(shareUrl).then(() => { setCopied(true); setTimeout(() => setCopied(false), 2000) }).catch(() => {}) }} className="w-full py-3.5 rounded-full text-[10px] tracking-widest uppercase transition-all active:scale-[0.98] bg-[#F5F5F0] text-[#0A0A0A]" style={fontJ}>{copied ? 'Copied!' : 'Copy Link'}</button>
-            {typeof navigator !== 'undefined' && 'share' in navigator && (
-              <button onClick={() => navigator.share({ title: 'End Of What', text: `"${playingText}"\n\n@jiwonnnnieee\nso.now-then.dev/eow`, url: shareUrl }).catch(() => {})} className="w-full py-3 rounded-full text-[10px] tracking-widest uppercase transition-all active:scale-[0.98] border border-[#F5F5F0]/30 text-[#F5F5F0]/60 hover:text-[#F5F5F0]" style={fontJ}>Share Link</button>
-            )}
+            <button onClick={shareCard} className="w-full py-3.5 rounded-full text-[10px] tracking-widest uppercase transition-all active:scale-[0.98] bg-[#F5F5F0] text-[#0A0A0A] font-medium" style={fontJ}>Share Card</button>
+            <button onClick={() => { navigator.clipboard.writeText(shareUrl).then(() => { setCopied(true); setTimeout(() => setCopied(false), 2000) }).catch(() => {}) }} className="w-full py-3 rounded-full text-[10px] tracking-widest uppercase transition-all active:scale-[0.98] border border-[#F5F5F0]/30 text-[#F5F5F0]/60 hover:text-[#F5F5F0]" style={fontJ}>{copied ? 'Copied!' : 'Copy Link'}</button>
           </div>
           <div className="mt-8 flex justify-center gap-6">
             <button onClick={() => play(playingText)} className="text-[10px] text-[#555] hover:text-[#999] tracking-wider uppercase" style={fontJ}>Replay</button>
@@ -169,18 +191,26 @@ export default function EOWApp() {
 
         <div className="fixed inset-0 z-[60] flex flex-col items-center justify-end pb-14 pointer-events-none">
           <div className="flex flex-col items-center gap-3 w-full max-w-[320px] px-4 pointer-events-auto">
-            <button
-              onClick={shareToReels}
-              disabled={sharing}
-              className={`w-full py-3 rounded-full text-[10px] tracking-widest uppercase transition-all active:scale-[0.98] font-medium ${sharing ? 'bg-[#F5F5F0] text-[#0A0A0A] animate-pulse' : 'bg-[#F5F5F0]/20 text-[#F5F5F0]/40 hover:bg-[#F5F5F0] hover:text-[#0A0A0A]'}`}
-              style={fontJ}
-            >
-              {sharing ? 'Almost ready...' : 'Share to Reels'}
-            </button>
+            <div className="flex gap-3 w-full">
+              <button
+                onClick={shareToReels}
+                disabled={sharing}
+                className={`flex-1 py-3 rounded-full text-[10px] tracking-widest uppercase transition-all active:scale-[0.98] font-medium ${sharing ? 'bg-[#F5F5F0] text-[#0A0A0A] animate-pulse' : 'bg-[#F5F5F0]/20 text-[#F5F5F0]/40 hover:bg-[#F5F5F0] hover:text-[#0A0A0A]'}`}
+                style={fontJ}
+              >
+                {sharing ? 'Almost ready...' : 'Video'}
+              </button>
+              <button
+                onClick={() => setPhase('share')}
+                className="flex-1 py-3 rounded-full text-[10px] tracking-widest uppercase transition-all active:scale-[0.98] font-medium bg-[#F5F5F0]/20 text-[#F5F5F0]/40 hover:bg-[#F5F5F0] hover:text-[#0A0A0A]"
+                style={fontJ}
+              >
+                Card
+              </button>
+            </div>
             <div className="flex gap-3 w-full">
               <button onClick={() => play(playingText)} className="flex-1 py-2.5 rounded-full text-[10px] tracking-widest uppercase border border-[#F5F5F0]/20 text-[#F5F5F0]/40 hover:border-[#F5F5F0]/60 hover:text-[#F5F5F0] transition-all" style={fontJ}>Replay</button>
               <button onClick={resetToIdle} className="flex-1 py-2.5 rounded-full text-[10px] tracking-widest uppercase border border-[#F5F5F0]/20 text-[#F5F5F0]/40 hover:border-[#F5F5F0]/60 hover:text-[#F5F5F0] transition-all" style={fontJ}>New</button>
-              <button onClick={() => setPhase('share')} className="flex-1 py-2.5 rounded-full text-[10px] tracking-widest uppercase border border-[#F5F5F0]/20 text-[#F5F5F0]/40 hover:border-[#F5F5F0]/60 hover:text-[#F5F5F0] transition-all" style={fontJ}>Link</button>
             </div>
           </div>
         </div>
