@@ -49,6 +49,8 @@ export const metadata: Metadata = {
     description: "Your life in numbers. Heartbeats, seasons, sunsets, and the people who changed the world at your age.",
     images: ["https://so.now-then.dev/og-image.png"],
   },
+  icons: { icon: '/favicon.ico', apple: '/apple-touch-icon.png' },
+
 }
 
 export const viewport: Viewport = {
@@ -66,9 +68,6 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ko" className={`${jakarta.variable} ${pretendard.variable} ${cormorant.variable} ${notoSerifKR.variable}`}>
-      <head>
-        <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4588308927468413" crossOrigin="anonymous" />
-      </head>
       <body className="min-h-screen">{children}</body>
     </html>
   )

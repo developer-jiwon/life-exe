@@ -30,21 +30,31 @@ export default function Privacy() {
         </section>
 
         <section>
-          <h2 className="text-base font-semibold text-[#1A1A1A] mb-2">4. 광고</h2>
-          <p>Google AdSense를 통해 광고가 표시될 수 있습니다. AdSense는 광고 개인화를 위해 쿠키 및 기기 식별자를 수집할 수 있습니다.</p>
+          <h2 className="text-base font-semibold text-[#1A1A1A] mb-2">4. 위탁 처리 (호스팅)</h2>
+          <p>본 서비스는 Vercel Inc.(미국)에 웹 호스팅을 위탁합니다. 호스팅 과정에서 IP·접속 시간·User-Agent가 일시적으로 기록될 수 있으며, 익명 통계 외 별도 분석 도구는 사용하지 않습니다.</p>
         </section>
 
         <section>
-          <h2 className="text-base font-semibold text-[#1A1A1A] mb-2">5. 분석</h2>
-          <p>Google Analytics를 통해 사이트 사용 통계를 수집합니다. 개인을 식별할 수 없는 익명 데이터만 수집됩니다.</p>
+          <h2 className="text-base font-semibold text-[#1A1A1A] mb-2">5. 광고 및 분석 도구 미사용</h2>
+          <p>본 서비스는 광고(Google AdSense 등) 및 사용자 추적 분석 도구(Google Analytics 등)를 사용하지 않습니다.</p>
         </section>
 
         <section>
-          <h2 className="text-base font-semibold text-[#1A1A1A] mb-2">6. 문의</h2>
-          <p>개인정보 관련 문의: <a href="mailto:dev.jiwonnie@gmail.com" className="underline">dev.jiwonnie@gmail.com</a></p>
+          <h2 className="text-base font-semibold text-[#1A1A1A] mb-2">6. 국외 이전</h2>
+          <p>호스팅 위탁사 Vercel Inc.이 미국에 소재하므로, 위 자동 수집 정보가 국외로 이전될 수 있습니다. 「개인정보 보호법」 제28조의8에 따라 고지합니다.</p>
         </section>
 
-        <p className="text-xs text-[#A0A0A0]">최종 수정일: 2026-04-05</p>
+        <section>
+          <h2 className="text-base font-semibold text-[#1A1A1A] mb-2">7. 만 14세 미만 아동</h2>
+          <p>본 서비스는 만 14세 미만 아동의 개인정보를 고의로 수집하지 않습니다.</p>
+        </section>
+
+        <section>
+          <h2 className="text-base font-semibold text-[#1A1A1A] mb-2">8. 개인정보 보호책임자 및 문의</h2>
+          <p>개인정보 보호책임자: 황지원 (개발·운영자) · <a href="mailto:dev.jiwonnie@gmail.com" className="underline">dev.jiwonnie@gmail.com</a></p>
+        </section>
+
+        <p className="text-xs text-[#A0A0A0]">시행일: 2026년 5월 3일</p>
       </div>
     </div>
   )
